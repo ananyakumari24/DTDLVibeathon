@@ -1,0 +1,27 @@
+{
+  "heldout_calls": 5,
+  "embedding_backend": "minilm",
+  "labelling": {
+    "rules": {
+      "issue_accuracy": 1.0,
+      "intent_accuracy": 0.6
+    },
+    "zeroshot": {
+      "issue_accuracy": 1.0,
+      "intent_accuracy": 1.0
+    }
+  },
+  "agent_style_accuracy": 1.0,
+  "live_classifier": {
+    "pack_routing_accuracy": 1.0,
+    "misroute_rate": 0.0,
+    "latency_ms_p50": 5.34,
+    "latency_ms_p95": 6.03,
+    "under_200ms": true
+  },
+  "unresolved": {
+    "unresolved_detection_accuracy": 1.0,
+    "actual_unresolved_rate": 0.4,
+    "predicted_unresolved_rate": 0.4
+  }
+}

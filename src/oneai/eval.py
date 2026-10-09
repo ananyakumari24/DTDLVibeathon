@@ -10,7 +10,6 @@ from typing import Dict, List
 
 from oneai import llm
 from oneai.offline.agent import extract_agent_style
-from oneai.offline.cluster import PREFERRED_STYLE, cluster_id
 from oneai.offline.embeddings import backend
 from oneai.offline.normalize import normalize_transcript
 from oneai.offline.understand import understand_text
@@ -59,8 +58,10 @@ def score_live(rows: List[Dict], repeats: int = 20) -> Dict:
         conv = row["conv"]
         first_turn = conv.turns[0].text
         pack, _, _ = live.classify_debug(first_turn)
-        expected = cluster_id(conv.issue, conv.intent, PREFERRED_STYLE[conv.intent])
-        routed_ok += pack.pack_id == expected
+        # With K-means-derived clusters, several clusters can share an (issue, intent) pair, so
+        # exact pack_id equality no longer makes sense. Check the routed pack's derived labels
+        # instead: did we land on a pack with the right issue and intent.
+        routed_ok += pack.issue == conv.issue and pack.intent == conv.intent
         for _ in range(repeats):
             latencies.append(live.classify_debug(first_turn)[2])
     latencies.sort()

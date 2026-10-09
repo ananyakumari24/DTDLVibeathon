@@ -9,7 +9,7 @@ import html
 import json
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
@@ -20,7 +20,9 @@ from oneai.eval import REPORT_PATH
 from oneai.offline.cluster import CLUSTERS_PATH, PACKS_DIR
 from oneai.offline.pipeline import ingest
 from oneai.realtime.classify import get_live_classifier
-from oneai.realtime.reply import plain_reply, suggest_reply
+from oneai.realtime.faq import FaqTurn, plan_turn
+from oneai.realtime.reply import call_ends, plain_reply, suggest_reply
+from oneai.realtime.tone import customer_tone
 from oneai.taxonomy import Insight, PatternPack, Transcript
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -31,8 +33,10 @@ COVERAGE = [
     ("Agent response patterns and style", "offline/agent.py, offline/packs.py", "done"),
     ("Multi-turn flow and friction", "offline/agent.py, offline/packs.py", "done"),
     ("Pattern Packs per group", "offline/packs.py", "done"),
-    ("Real-time lookup for the voice bot", "realtime/classify.py", "done"),
+    ("Real-time lookup for the voice bot (with low-confidence clarify)", "realtime/classify.py", "done"),
+    ("New Pattern Packs created live for unseen topics", "realtime/live_packs.py", "done"),
     ("Guided reply for the voice bot", "realtime/reply.py", "done"),
+    ("Apology first for complaints; thank-you sign-off once resolved", "realtime/tone.py, realtime/reply.py", "done"),
     ("LiveKit integration", "livekit_adapter/agent.py", "written, not run (needs LiveKit keys)"),
     ("Evaluation: intent accuracy, unresolved calls, engagement", "eval.py, ab_demo.py", "done"),
 ]
@@ -63,6 +67,11 @@ class ReplyIn(BaseModel):
     text: str
     said_before: List[str] = Field(default_factory=list, description="Earlier customer turns in this call")
     history: List[str] = Field(default_factory=list, description="Earlier bot replies in this call")
+    faq_id: Optional[str] = Field(None, description="FAQ in progress, from the previous reply")
+    faq_step: int = Field(0, description="Next FAQ step to give, from the previous reply")
+    pack_id: Optional[str] = Field(None, description="Pack used by the previous reply in this call")
+    paused_faq_id: Optional[str] = Field(None, description="FAQ paused for a side question, from the previous reply")
+    paused_faq_step: int = Field(0, description="Where the paused FAQ resumes, from the previous reply")
 
 
 class ReplyOut(BaseModel):
@@ -70,6 +79,14 @@ class ReplyOut(BaseModel):
     similarity: float
     latency_ms: float
     is_placeholder: bool
+    pack_created: bool = Field(False, description="True when this turn created a new live pack for an unseen topic")
+    tone: str = Field("neutral", description="Customer tone this turn: upset, complaint or neutral")
+    call_ended: bool = Field(False, description="True when the customer is done and the bot signed off")
+    faq_id: Optional[str] = Field(None, description="FAQ still in progress; send back on the next turn")
+    faq_step: int = Field(0, description="Next FAQ step; send back on the next turn")
+    paused_faq_id: Optional[str] = Field(None, description="FAQ paused for a side question; send back on the next turn")
+    paused_faq_step: int = Field(0, description="Where the paused FAQ resumes; send back on the next turn")
+    faq_used: Optional[str] = Field(None, description="FAQ that shaped this reply, e.g. 'faq_02 · troubleshoot · step 2/3'")
     pack_reply: str
     plain_reply: str
 
@@ -99,11 +116,20 @@ def get_cluster(cluster_id: str) -> dict:
 @app.get("/packs")
 def list_packs() -> List[dict]:
     packs = [PatternPack.model_validate_json(p.read_text(encoding="utf-8")) for p in sorted(PACKS_DIR.glob("*.json"))]
+    packs += get_live_classifier().live.packs
     return [p.model_dump(include={"pack_id", "issue", "intent", "style", "call_count", "built_with"}) for p in packs]
+
+
+@app.get("/live-packs")
+def list_live_packs() -> List[dict]:
+    return get_live_classifier().live.summary()
 
 
 @app.get("/packs/{pack_id}")
 def get_pack(pack_id: str) -> dict:
+    live = get_live_classifier().live.get(pack_id)
+    if live is not None:
+        return live.model_dump(exclude={"centroid"})
     path = PACKS_DIR / f"{pack_id}.json"
     if path.parent != PACKS_DIR or not path.exists():
         raise HTTPException(status_code=404, detail=f"No pack {pack_id}")
@@ -116,15 +142,50 @@ def classify_turn(body: TextIn) -> ClassifyOut:
     return ClassifyOut(pack=pack, similarity=round(score, 4), latency_ms=round(ms, 2))
 
 
+def _describe_faq(faq: Optional[FaqTurn]) -> Optional[str]:
+    if faq is None:
+        return None
+    if faq.kind == "steps":
+        where = f"step {faq.step + 1}/{faq.total}"
+    elif faq.kind == "aside":
+        where = f"off-topic, holding step {faq.step + 1}/{faq.total}"
+    else:
+        where = faq.kind.replace("_", " ")
+    text = f"{faq.entry['id']} · {faq.entry['intent']} · {where}"
+    if faq.detour:
+        text += " · side question"
+    if faq.paused:
+        text += f" · {faq.paused[0]} paused"
+    if faq.resume:
+        text += f" · back to {faq.resume.entry['id']} step {faq.resume.step + 1}/{faq.resume.total}"
+    return text
+
+
 @app.post("/reply", response_model=ReplyOut)
 def reply(body: ReplyIn) -> ReplyOut:
-    pack, score, ms = get_live_classifier().classify_debug(" ".join(body.said_before + [body.text]))
+    pack, score, ms, created = get_live_classifier().classify_or_create(
+        " ".join(body.said_before + [body.text]), latest=body.text, current=body.pack_id
+    )
+    faq = plan_turn(body.text, body.faq_id, body.faq_step, body.paused_faq_id, body.paused_faq_step)
+    ended = call_ends(body.text, faq, body.history)
+    # After a side question the reply already went back to the paused flow, so that's what continues.
+    current = (faq.resume or faq) if faq else None
+    in_progress = current is not None and current.next_step is not None and not ended
+    paused = faq.paused if faq is not None and not ended else None
     return ReplyOut(
+        faq_id=current.entry["id"] if in_progress else None,
+        faq_step=current.next_step if in_progress else 0,
+        paused_faq_id=paused[0] if paused else None,
+        paused_faq_step=paused[1] if paused else 0,
+        faq_used=_describe_faq(faq),
         pack_id=pack.pack_id,
         similarity=round(score, 4),
         latency_ms=round(ms, 2),
         is_placeholder=pack.is_placeholder,
-        pack_reply=suggest_reply(body.text, pack, body.history),
+        pack_created=created,
+        tone=customer_tone(body.text),
+        call_ended=ended,
+        pack_reply=suggest_reply(body.text, pack, body.history, faq),
         plain_reply=plain_reply(body.text, body.history),
     )
 

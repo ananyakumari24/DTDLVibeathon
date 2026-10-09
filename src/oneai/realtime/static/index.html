@@ -18,9 +18,17 @@
   .replies { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: .8rem; }
   .reply { border: 1px solid #ddd; border-radius: 6px; padding: .6rem; }
   .reply.pack { border-color: #ff4fa3; }
+  #transcript { display: flex; flex-direction: column; gap: .8rem; margin-top: 1rem; }
+  .turn { border-top: 1px solid #eee; padding-top: .8rem; }
+  .turn:first-child { border-top: 0; padding-top: 0; }
+  .turn .customer { font-weight: 600; margin: 0 0 .2rem; }
+  .turn .routing { margin: 0 0 .4rem; }
   table { border-collapse: collapse; width: 100%; font-size: .85rem; }
   td, th { border-bottom: 1px solid #eee; padding: .3rem; text-align: left; }
   .full { grid-column: 1 / -1; }
+  .badge.tone { background: #e8590c; }
+  .ended { text-align: center; color: #2b8a3e; font-weight: 600; margin: .4rem 0 0; }
+  .badge { background: #ff4fa3; color: #fff; border-radius: 4px; padding: 0 .35rem; font-size: .75rem; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -29,6 +37,8 @@
   <section>
     <h2>Groups (intent × issue × style)</h2>
     <div id="groups" class="muted">Loading…</div>
+    <h2 style="margin-top:1rem">Created live (new topics)</h2>
+    <div id="live-groups" class="muted">None yet. Send a turn on a topic no group covers.</div>
   </section>
   <section>
     <h2>Pattern Pack</h2>
@@ -36,13 +46,10 @@
   </section>
   <section class="full">
     <h2>Try a live turn</h2>
+    <p class="muted">Send a customer line, then keep typing follow-up lines as the same call — each turn is added to the transcript below.</p>
     <textarea id="turn">My card was charged twice for the same order.</textarea>
     <button id="send">Send</button> <button id="reset">New call</button>
-    <span id="routing" class="muted"></span>
-    <div class="replies">
-      <div class="reply"><strong>Plain bot</strong><p id="plain"></p></div>
-      <div class="reply pack"><strong>Pattern-Pack bot</strong><p id="guided"></p></div>
-    </div>
+    <div id="transcript"></div>
   </section>
   <section class="full">
     <h2>A/B results on held-out calls</h2>
@@ -59,7 +66,23 @@ async function loadGroups() {
   box.textContent = "";
   groups.forEach(g => {
     const b = el("button", `${g.id}  (${g.member_call_ids.length})`);
+    const hint = el("div", `e.g. "${g.sample_phrasings[0] || ""}"`); hint.className = "muted"; hint.style.fontSize = ".75rem"; b.appendChild(hint);
     b.onclick = () => { document.querySelectorAll("#groups button").forEach(x => x.classList.remove("active")); b.classList.add("active"); showPack(g.id); };
+    box.appendChild(b);
+  });
+}
+
+async function loadLivePacks() {
+  const res = await fetch("/live-packs");
+  if (!res.ok) return;
+  const packs = await res.json();
+  const box = document.getElementById("live-groups");
+  if (!packs.length) return;
+  box.textContent = "";
+  packs.forEach(p => {
+    const b = el("button", `${p.pack_id}  (${p.call_count})`);
+    const hint = el("div", `e.g. "${p.top_customer_phrasings[0] || ""}"`); hint.className = "muted"; hint.style.fontSize = ".75rem"; b.appendChild(hint);
+    b.onclick = () => { document.querySelectorAll("#groups button, #live-groups button").forEach(x => x.classList.remove("active")); b.classList.add("active"); showPack(p.pack_id); };
     box.appendChild(b);
   });
 }
@@ -70,8 +93,14 @@ async function showPack(id) {
   box.textContent = "";
   if (!res.ok) { box.textContent = "No pack built for this group yet."; return; }
   const p = await res.json();
+  const live = id.startsWith("live__");
+  const cres = live ? null : await fetch(`/clusters/${encodeURIComponent(id)}`);
+  const cluster = cres && cres.ok ? await cres.json() : null;
+  box.appendChild(el("h3", id));
   box.appendChild(el("p", `${p.issue} · ${p.intent} · ${p.style} · ${p.call_count} calls · built with ${p.built_with}`)).className = "muted";
+  if (live) box.appendChild(el("p", "Created live for a topic no mined group covers. It learns from each new call routed to it.")).className = "muted";
   const sections = [
+    ...(cluster ? [[`What customers in this group actually say (${cluster.member_call_ids.length} calls)`, cluster.sample_phrasings]] : []),
     ["Recommended opener", [p.recommended_opener]],
     ["Style cue", [p.style_cue]],
     ["Follow-up questions", p.follow_ups],
@@ -83,20 +112,61 @@ async function showPack(id) {
   sections.forEach(([title, items]) => { box.appendChild(el("strong", title)); box.appendChild(list(items)); });
 }
 
-let saidBefore = [], plainHistory = [], packHistory = [];
+let saidBefore = [], plainHistory = [], packHistory = [], faqState = { faq_id: null, faq_step: 0, paused_faq_id: null, paused_faq_step: 0 }, lastPack = null;
+function appendTurn(text, r) {
+  const box = document.getElementById("transcript");
+  const turn = el("div"); turn.className = "turn";
+  turn.appendChild(el("p", `Customer: ${text}`)).className = "customer";
+  const unknown = r.pack_id.startsWith("unknown__") || r.is_placeholder && r.pack_id.includes("clarify");
+  const routeLabel = unknown
+    ? `→ no confident pack (similarity ${r.similarity}, ${r.latency_ms} ms) — clarifying`
+    : r.pack_created
+    ? `→ no mined pack matched (best similarity ${r.similarity}) — created new pack ${r.pack_id} (${r.latency_ms} ms) · ${r.faq_used ? 'FAQ ' + r.faq_used : 'no FAQ match'}`
+    : `→ ${r.pack_id} (similarity ${r.similarity}, ${r.latency_ms} ms) · ${r.faq_used ? 'FAQ ' + r.faq_used : 'no FAQ match'}`;
+  const routing = turn.appendChild(el("p", routeLabel)); routing.className = "routing muted";
+  if (r.pack_created) { const b = el("span", "NEW PACK"); b.className = "badge"; routing.prepend(b, " "); }
+  if (r.tone && r.tone !== "neutral") { const b = el("span", r.tone === "upset" ? "UPSET → APOLOGY" : "COMPLAINT → APOLOGY"); b.className = "badge tone"; routing.prepend(b, " "); }
+  const replies = el("div"); replies.className = "replies";
+  const plainBox = el("div"); plainBox.className = "reply";
+  plainBox.appendChild(el("strong", "Plain bot")); plainBox.appendChild(el("p", r.plain_reply));
+  const packBox = el("div"); packBox.className = "reply pack";
+  packBox.appendChild(el("strong", unknown ? "Clarify (no pack match)" : "Pattern-Pack bot"));
+  packBox.appendChild(el("p", r.pack_reply));
+  replies.appendChild(plainBox); replies.appendChild(packBox);
+  turn.appendChild(replies);
+  if (r.call_ended) turn.appendChild(el("p", "Call ended: query resolved. Click New call to start another.")).className = "ended";
+  box.appendChild(turn);
+  box.scrollTop = box.scrollHeight;
+}
 async function sendTurn() {
-  const text = document.getElementById("turn").value.trim();
+  const input = document.getElementById("turn");
+  const text = input.value.trim();
   if (!text) return;
   const res = await fetch("/reply", { method: "POST", headers: { "content-type": "application/json" },
-    body: JSON.stringify({ text, said_before: saidBefore, history: packHistory }) });
+    body: JSON.stringify({ text, said_before: saidBefore, history: packHistory, pack_id: lastPack, ...faqState }) });
   const r = await res.json();
   saidBefore.push(text); plainHistory.push(r.plain_reply); packHistory.push(r.pack_reply);
-  document.getElementById("routing").textContent = ` → ${r.pack_id} (similarity ${r.similarity}, ${r.latency_ms} ms)`;
-  document.getElementById("plain").textContent = r.plain_reply;
-  document.getElementById("guided").textContent = r.pack_reply;
-  showPack(r.pack_id);
+  faqState = { faq_id: r.faq_id, faq_step: r.faq_step, paused_faq_id: r.paused_faq_id, paused_faq_step: r.paused_faq_step }; lastPack = r.pack_id;
+  appendTurn(text, r);
+  input.value = "";
+  input.focus();
+  if (r.call_ended) document.getElementById("send").disabled = true;
+  if (r.pack_id.startsWith("live__")) loadLivePacks();
+  if (!(r.pack_id.startsWith("unknown__") || (r.is_placeholder && r.pack_id.includes("clarify")))) {
+    showPack(r.pack_id);
+  } else {
+    const box = document.getElementById("pack");
+    box.textContent = "";
+    box.appendChild(el("p", "No mined Pattern Pack matched this turn confidently.")).className = "muted";
+    box.appendChild(el("p", "The turn was too vague to start a new pack, so the bot asks what the issue is first."));
+  }
 }
-function resetCall() { saidBefore = []; plainHistory = []; packHistory = []; ["routing", "plain", "guided"].forEach(i => document.getElementById(i).textContent = ""); }
+function resetCall() {
+  saidBefore = []; plainHistory = []; packHistory = []; faqState = { faq_id: null, faq_step: 0, paused_faq_id: null, paused_faq_step: 0 }; lastPack = null;
+  document.getElementById("transcript").textContent = "";
+  document.getElementById("turn").value = "";
+  document.getElementById("send").disabled = false;
+}
 
 async function loadAB() {
   const box = document.getElementById("ab");
@@ -119,7 +189,7 @@ async function loadAB() {
 
 document.getElementById("send").onclick = sendTurn;
 document.getElementById("reset").onclick = resetCall;
-loadGroups(); loadAB();
+loadGroups(); loadLivePacks(); loadAB();
 </script>
 </body>
 </html>

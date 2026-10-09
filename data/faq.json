@@ -1,0 +1,300 @@
+[
+  {
+    "id": "faq_01",
+    "issue": "account_access",
+    "intent": "troubleshoot",
+    "question": "Change the phone number or email on my profile",
+    "variants": [
+      "I want to change the phone number linked to my profile",
+      "how do I update my email address",
+      "change contact details on my account"
+    ],
+    "steps": [
+      "Open the app and go to Profile, then Contact info.",
+      "Tap Edit next to the number or email. We'll text a one-time code to your current number, so enter that when it arrives.",
+      "Type the new number or email and tap Save. You'll get a confirmation on the new one within a minute."
+    ],
+    "if_not_resolved": "If the code isn't reaching you because you no longer have that number, I can verify you with your account PIN and ID and make the change from here."
+  },
+  {
+    "id": "faq_02",
+    "issue": "account_access",
+    "intent": "troubleshoot",
+    "question": "Reset my password or account PIN",
+    "variants": [
+      "I can't log in even after resetting my password",
+      "forgot my password",
+      "I forgot my account PIN"
+    ],
+    "steps": [
+      "On the login screen, tap Forgot password and enter the email or number on the account.",
+      "Open the reset link we send. It's valid for 30 minutes, so if it's older than that, request a new one.",
+      "Choose a new password with at least 8 characters, then log in with it in the app, not with a saved password in your browser."
+    ],
+    "if_not_resolved": "If you still can't get in, I'll verify you here and reset it for you directly."
+  },
+  {
+    "id": "faq_03",
+    "issue": "account_access",
+    "intent": "troubleshoot",
+    "question": "Account locked after failed logins",
+    "variants": [
+      "my account is locked",
+      "too many login attempts",
+      "it says my account is temporarily blocked"
+    ],
+    "steps": [
+      "After five failed attempts the account locks for 30 minutes. Has it been longer than 30 minutes since the last attempt?",
+      "Close the app fully, reopen it and log in once, carefully. If you're not sure of the password, use Forgot password instead of guessing again."
+    ],
+    "if_not_resolved": "I'll verify your identity and unlock it right now."
+  },
+  {
+    "id": "faq_04",
+    "issue": "account_access",
+    "intent": "info",
+    "question": "Two-factor authentication",
+    "variants": [
+      "do you support two-factor authentication with a hardware key",
+      "how do I turn on 2FA",
+      "add extra security to my login"
+    ],
+    "steps": [
+      "We support two-factor authentication with SMS codes or an authenticator app, and you turn it on in the app under Security. Hardware security keys aren't supported yet."
+    ],
+    "if_not_resolved": ""
+  },
+  {
+    "id": "faq_05",
+    "issue": "account_access",
+    "intent": "escalate",
+    "question": "Account or line opened with my details",
+    "variants": [
+      "my teenage son signed up with my details, how do I delete his profile",
+      "someone opened an account in my name",
+      "somebody used my details to open a line"
+    ],
+    "steps": [
+      "I'm going to flag this to our fraud team and put a block on any new lines in your name while they look into it.",
+      "They'll need to confirm which lines you didn't set up. Can you tell me the last four digits of any number you don't recognise?",
+      "Thanks. The case is open, and the fraud team will contact you within 24 hours. You'll get the case number by SMS now."
+    ],
+    "if_not_resolved": "I'll mark the case as urgent so a supervisor picks it up today."
+  },
+  {
+    "id": "faq_06",
+    "issue": "account_access",
+    "intent": "info",
+    "question": "Add an authorised user",
+    "variants": [
+      "can my wife call about my account",
+      "add someone who can manage my plan"
+    ],
+    "steps": [
+      "The account holder can add an authorised user in the app under Profile, then Authorised users. That person passes a short verification the first time they contact us."
+    ],
+    "if_not_resolved": ""
+  },
+  {
+    "id": "faq_07",
+    "issue": "billing",
+    "intent": "troubleshoot",
+    "question": "Charged twice or an unexpected charge",
+    "variants": [
+      "My card was charged twice for the same order",
+      "there is a charge I don't recognise on my bill",
+      "I was charged twice"
+    ],
+    "steps": [
+      "Open the app and go to Billing, then Payments, and check whether each charge says Pending or Completed.",
+      "If either one says Pending, that's a temporary hold that drops off by itself in 3 to 5 working days. If both say Completed, I'll raise a refund for the duplicate now, and it reaches your card in 5 to 7 working days."
+    ],
+    "if_not_resolved": "I'll pass it to our billing team to investigate, and they'll get back to you within 2 working days."
+  },
+  {
+    "id": "faq_08",
+    "issue": "billing",
+    "intent": "info",
+    "question": "Understand a bill or when it is due",
+    "variants": [
+      "when is my next billing date",
+      "explain the charges on my bill",
+      "why is my bill higher this month",
+      "my phone bill jumped"
+    ],
+    "steps": [
+      "Your bill date and every line item are in the app under Billing, then Latest bill.",
+      "If the amount changed, the usual reason is a plan change mid-month, which shows up as a one-off pro-rated charge, or a roaming or add-on charge listed separately."
+    ],
+    "if_not_resolved": ""
+  },
+  {
+    "id": "faq_09",
+    "issue": "billing",
+    "intent": "troubleshoot",
+    "question": "Payment failed or late payment",
+    "variants": [
+      "my payment was declined",
+      "I missed my payment date",
+      "will I be disconnected for paying late"
+    ],
+    "steps": [
+      "First, check that the card saved under Billing, then Payment method hasn't expired.",
+      "If the card is fine, tap Pay now on the latest bill to retry. Service is only restricted after 14 days overdue, so you're not at risk today.",
+      "If it goes through, service stays as it is, and if it had been restricted it comes back within an hour."
+    ],
+    "if_not_resolved": "If it still won't go through, I can set up a 14-day payment extension for you right now."
+  },
+  {
+    "id": "faq_10",
+    "issue": "billing",
+    "intent": "troubleshoot",
+    "question": "Switch plan or add a data pack",
+    "variants": [
+      "I'm running out of data",
+      "change my plan",
+      "cheaper plan"
+    ],
+    "steps": [
+      "In the app, go to Plans to see the plans available on your number.",
+      "For extra data this month, choose Add-ons and pick a pack. It starts working straight away and is charged on your next bill.",
+      "To change your plan instead, choose Change plan. An upgrade starts today, and a downgrade starts from your next bill date."
+    ],
+    "if_not_resolved": "I can look at your usage over the last three months and suggest the plan that fits best."
+  },
+  {
+    "id": "faq_11",
+    "issue": "billing",
+    "intent": "info",
+    "question": "Roaming charges and travel packs",
+    "variants": [
+      "how much does roaming cost",
+      "I'm travelling abroad next week",
+      "got charged for data abroad"
+    ],
+    "steps": [
+      "Roaming is off by default. You can turn it on in the app under Roaming, and a travel pack bought before you go works out much cheaper than pay-as-you-go.",
+      "If you've been charged for roaming you didn't expect, I can review that usage and may be able to adjust it."
+    ],
+    "if_not_resolved": ""
+  },
+  {
+    "id": "faq_12",
+    "issue": "billing",
+    "intent": "escalate",
+    "question": "Cancel service or end contract",
+    "variants": [
+      "I want to cancel my contract",
+      "how much to leave early",
+      "close my account"
+    ],
+    "steps": [
+      "I can start that for you. First I'll check your contract end date and any early-termination fee, so you know the exact figure before deciding.",
+      "Before I go ahead, would a cheaper plan or a pause on the line suit you better? If not, I'll carry on with the cancellation.",
+      "Okay, I've submitted the cancellation. You'll get written confirmation and your final bill date by email within the hour."
+    ],
+    "if_not_resolved": "I'll connect you to our retentions team, who can confirm the final details with you."
+  },
+  {
+    "id": "faq_13",
+    "issue": "shipping",
+    "intent": "troubleshoot",
+    "question": "Track a SIM or device order",
+    "variants": [
+      "where is my SIM card",
+      "my phone hasn't arrived",
+      "track my order"
+    ],
+    "steps": [
+      "Open the app and go to Orders, then tap Track on your order for the live courier link.",
+      "Standard delivery is 2 to 3 working days from dispatch. If it's been longer than that, tell me your order number and I'll check with the courier."
+    ],
+    "if_not_resolved": "I'll open a trace with the courier, and if it isn't found within 48 hours we'll send a replacement free."
+  },
+  {
+    "id": "faq_14",
+    "issue": "shipping",
+    "intent": "escalate",
+    "question": "Delivery delayed or marked delivered but missing",
+    "variants": [
+      "order says delivered but I don't have it",
+      "my parcel is late",
+      "package lost"
+    ],
+    "steps": [
+      "I'm sorry about this. Could you check with neighbours, and in any safe place the courier might have used?",
+      "Thanks for checking. I'm opening a trace with the courier now, and they'll report back within 48 hours.",
+      "If it isn't found, we'll send a replacement at no cost and email you the new tracking link."
+    ],
+    "if_not_resolved": "I'll escalate it so a replacement goes out today instead of waiting on the trace."
+  },
+  {
+    "id": "faq_15",
+    "issue": "shipping",
+    "intent": "escalate",
+    "question": "Faulty or wrong device received",
+    "variants": [
+      "my phone arrived damaged",
+      "I received the wrong SIM",
+      "return a device"
+    ],
+    "steps": [
+      "I'm sorry about that. You have 14 days to return it, and for a damaged or wrong item the return is free.",
+      "Could you send a photo of the item through the app under Orders, then Report a problem?",
+      "Thanks. I've booked a free courier pick-up, and the replacement ships as soon as the courier collects the item."
+    ],
+    "if_not_resolved": "I'll ask a supervisor to approve sending the replacement before we receive the return."
+  },
+  {
+    "id": "faq_16",
+    "issue": "shipping",
+    "intent": "troubleshoot",
+    "question": "Activate a new SIM or eSIM",
+    "variants": [
+      "how do I activate my SIM",
+      "set up eSIM",
+      "new SIM not working"
+    ],
+    "steps": [
+      "Put the SIM in and restart the phone. For an eSIM, go to Settings, then Mobile data, then Add eSIM.",
+      "Open our app, tap Activate SIM, and scan the code on the SIM card or the QR code from your email.",
+      "Activation takes about 15 minutes. After that, restart the phone once more and you should see our network name at the top."
+    ],
+    "if_not_resolved": "Let me run a check on the SIM from here. If it's faulty, I'll send a replacement today."
+  },
+  {
+    "id": "faq_17",
+    "issue": "shipping",
+    "intent": "troubleshoot",
+    "question": "Transfer my number from another provider",
+    "variants": [
+      "keep my old number",
+      "port my number",
+      "switch to you from another network",
+      "can I keep my number if I switch"
+    ],
+    "steps": [
+      "Don't cancel your old plan yet, because cancelling releases the number. First, text PORT to your current provider to get a transfer code.",
+      "When the code arrives, enter it in our app under Number transfer, or read it out to me.",
+      "The switch completes within one working day. You'll lose signal for a few minutes while it happens, then your number works on our network."
+    ],
+    "if_not_resolved": "I'll contact the other provider directly to push the transfer through."
+  },
+  {
+    "id": "faq_18",
+    "issue": "network",
+    "intent": "troubleshoot",
+    "question": "No signal or slow data",
+    "variants": [
+      "I have no signal",
+      "internet is very slow",
+      "can't make calls"
+    ],
+    "steps": [
+      "Let's start simple: turn on airplane mode for 10 seconds, then turn it off.",
+      "If that didn't help, restart the phone, and check that Mobile data and Roaming are set correctly under Settings.",
+      "Now I'll check for an outage near you. What's your postcode?"
+    ],
+    "if_not_resolved": "There's no outage reported there, so I'll run a line test and book an engineer visit if it finds a fault."
+  }
+]

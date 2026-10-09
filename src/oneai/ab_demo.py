@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Dict, List
 
@@ -16,7 +17,8 @@ from oneai.eval import HELDOUT_PATH, load_heldout
 from oneai.offline.agent import EMPATHY_WORDS, REPEAT_WORDS
 from oneai.offline.cluster import PREFERRED_STYLE
 from oneai.realtime.classify import get_live_classifier
-from oneai.realtime.reply import plain_reply, suggest_reply
+from oneai.realtime.reply import APOLOGY_WORDS, plain_reply, suggest_reply
+from oneai.realtime.tone import customer_tone
 from oneai.taxonomy import Conversation
 
 AB_REPORT_PATH = Path("data/ab_report.json")
@@ -35,8 +37,15 @@ def score_reply(reply: str, conv: Conversation, turn_text: str) -> Dict[str, boo
     r = reply.lower()
     turn = turn_text.lower()
     wants_empathy = PREFERRED_STYLE[conv.intent] == "empathic"
+    if customer_tone(turn_text) != "neutral":
+        # A complaining customer should hear an apology before anything else.
+        right_tone = bool(APOLOGY_WORDS.search(re.split(r"(?<=[.!?])\s+", reply.strip())[0]))
+    elif wants_empathy:
+        right_tone = any(w in r for w in EMPATHY_WORDS)
+    else:
+        right_tone = not r.startswith(("i'm sorry", "sorry"))
     return {
-        "right_tone": any(w in r for w in EMPATHY_WORDS) if wants_empathy else not r.startswith(("i'm sorry", "sorry")),
+        "right_tone": right_tone,
         "on_topic": any(w in r for w in ISSUE_WORDS[conv.issue]),
         "no_repeat_burden": not (any(w in turn for w in REPEAT_WORDS) and any(a in r for a in REPEAT_ASKS)),
         "moves_forward": "?" in r or any(w in r for w in ACTION_WORDS),

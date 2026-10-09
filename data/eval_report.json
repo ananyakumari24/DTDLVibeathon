@@ -15,8 +15,8 @@
   "live_classifier": {
     "pack_routing_accuracy": 1.0,
     "misroute_rate": 0.0,
-    "latency_ms_p50": 5.34,
-    "latency_ms_p95": 6.03,
+    "latency_ms_p50": 6.91,
+    "latency_ms_p95": 14.39,
     "under_200ms": true
   },
   "unresolved": {

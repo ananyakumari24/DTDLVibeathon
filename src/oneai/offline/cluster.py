@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 from oneai.offline.agent import extract_agent_style
 from oneai.offline.embeddings import backend, embed_many
@@ -26,17 +28,68 @@ def cluster_id(issue: str, intent: str, style: str) -> str:
     return f"{issue}__{intent}__{style}"
 
 
-def build_clusters(conversations: List[Conversation], method: str = "auto") -> List[Cluster]:
+def choose_k(vecs: np.ndarray, k_min: int = 2, k_max: int = 30) -> int:
+    """Auto-pick the number of K-means clusters via silhouette score over a small range."""
+    upper = min(k_max, len(vecs) - 1)
+    if upper < k_min:
+        return max(1, len(vecs))
+    best_k, best_score = k_min, -1.0
+    for k in range(k_min, upper + 1):
+        labels = KMeans(n_clusters=k, n_init=10, random_state=0).fit_predict(vecs)
+        score = silhouette_score(vecs, labels)
+        if score > best_score:
+            best_k, best_score = k, score
+    return best_k
+
+
+def build_clusters(conversations: List[Conversation], method: str = "auto", k: int | None = None) -> List[Cluster]:
+    """Cluster conversations by embedding similarity (K-means).
+
+    K-means only finds structure that is already present in the offline training set. If the
+    transcripts only cover billing / shipping / account_access, you will not get a "mobile
+    network" group — that has to appear in the data (or be rejected at live classify time).
+    When several semantic sub-topics share the same majority issue x intent x style labels,
+    they become distinct packs with ``__2``, ``__3``, … suffixes. Display labels still come
+    from a majority vote so Pattern Pack building and the dashboard keep working.
+    """
     vecs = embed_many([c.customer_text for c in conversations])
-    groups: Dict[Tuple[str, str, str], List[int]] = defaultdict(list)
-    for i, conv in enumerate(conversations):
-        labels = understand(conv, method=method)
-        groups[(labels["issue"], labels["question_type"], extract_agent_style(conv))].append(i)
+    n_clusters = k or choose_k(vecs)
+    kmeans = KMeans(n_clusters=n_clusters, n_init=10, random_state=0).fit(vecs)
+
+    groups: Dict[int, List[int]] = defaultdict(list)
+    for i, label in enumerate(kmeans.labels_):
+        groups[int(label)].append(i)
+
+    labels_cache: Dict[int, Dict[str, str]] = {}
+    styles_cache: Dict[int, str] = {}
+
+    def issue_intent(i: int) -> Dict[str, str]:
+        if i not in labels_cache:
+            labels_cache[i] = understand(conversations[i], method=method)
+        return labels_cache[i]
+
+    def style(i: int) -> str:
+        if i not in styles_cache:
+            styles_cache[i] = extract_agent_style(conversations[i])
+        return styles_cache[i]
 
     clusters: List[Cluster] = []
-    for (issue, intent, style), idxs in sorted(groups.items()):
-        centroid = vecs[idxs].mean(axis=0)
+    seen_ids: Counter = Counter()
+    for cluster_idx, idxs in sorted(groups.items()):
+        issue_votes = Counter(issue_intent(i)["issue"] for i in idxs)
+        intent_votes = Counter(issue_intent(i)["question_type"] for i in idxs)
+        style_votes = Counter(style(i) for i in idxs)
+        issue = issue_votes.most_common(1)[0][0]
+        intent = intent_votes.most_common(1)[0][0]
+        group_style = style_votes.most_common(1)[0][0]
+
+        base_id = cluster_id(issue, intent, group_style)
+        seen_ids[base_id] += 1
+        unique_id = base_id if seen_ids[base_id] == 1 else f"{base_id}__{seen_ids[base_id]}"
+
+        centroid = np.asarray(kmeans.cluster_centers_[cluster_idx], dtype=np.float32)
         centroid /= max(float(np.linalg.norm(centroid)), 1e-9)
+
         phrasings: List[str] = []
         for i in idxs:
             opener = conversations[i].turns[0].text
@@ -46,10 +99,10 @@ def build_clusters(conversations: List[Conversation], method: str = "auto") -> L
                 break
         clusters.append(
             Cluster(
-                id=cluster_id(issue, intent, style),
+                id=unique_id,
                 intent=intent,
                 issue=issue,
-                style=style,
+                style=group_style,
                 member_call_ids=[conversations[i].call_id for i in idxs],
                 centroid=centroid.round(5).tolist(),
                 sample_phrasings=phrasings,
@@ -75,14 +128,15 @@ def load_clusters(path: Path = CLUSTERS_PATH) -> List[Cluster]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Embed conversations and group by intent x issue x style")
+    parser = argparse.ArgumentParser(description="Embed conversations and cluster them with K-means")
     parser.add_argument("--in", dest="infile", type=Path, default=Path("data/synthetic/transcripts.jsonl"))
     parser.add_argument("--out", type=Path, default=CLUSTERS_PATH)
     parser.add_argument("--method", default="auto", choices=["auto", "llm", "zeroshot", "rules"])
+    parser.add_argument("--k", type=int, default=None, help="Number of K-means clusters (default: auto via silhouette score)")
     args = parser.parse_args()
 
     conversations = load_conversations(args.infile)
-    clusters = build_clusters(conversations, method=args.method)
+    clusters = build_clusters(conversations, method=args.method, k=args.k)
     save_clusters(clusters, args.out)
     print(f"Built {len(clusters)} groups from {len(conversations)} calls ({backend()} embeddings) -> {args.out}")
     for c in clusters:

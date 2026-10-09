@@ -26,9 +26,9 @@
       "turns": [
         {
           "customer": "Hey, my card got hit with the same subscription fee two times this month.",
-          "pack_id": "billing__troubleshoot__empathic",
+          "pack_id": "billing__troubleshoot__instructional__3",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
-          "pack_reply": "I'm really sorry about that \u2014 this sounds stressful. I can help sort it out. Which month shows the wrong charge?",
+          "pack_reply": "I can help with that. Let's go step by step. Which month shows the wrong charge?",
           "plain_checks": {
             "right_tone": false,
             "on_topic": false,
@@ -36,7 +36,7 @@
             "moves_forward": true
           },
           "pack_checks": {
-            "right_tone": true,
+            "right_tone": false,
             "on_topic": true,
             "no_repeat_burden": true,
             "moves_forward": true
@@ -44,7 +44,7 @@
         },
         {
           "customer": "Both are $12.99 on the 2nd.",
-          "pack_id": "billing__troubleshoot__empathic",
+          "pack_id": "billing__troubleshoot__instructional__3",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
           "pack_reply": "Was it the same card both times?",
           "plain_checks": {
@@ -108,9 +108,9 @@
       "turns": [
         {
           "customer": "The app keeps saying my password is wrong but I know it's right.",
-          "pack_id": "account_access__troubleshoot__empathic",
+          "pack_id": "account_access__troubleshoot__instructional__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
-          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. Which email is on the account?",
+          "pack_reply": "I'm sorry about that. Understood. I'll walk you through what we need to check. Which email is on the account?",
           "plain_checks": {
             "right_tone": false,
             "on_topic": false,
@@ -126,9 +126,9 @@
         },
         {
           "customer": "I already tried that twice.",
-          "pack_id": "account_access__troubleshoot__empathic",
+          "pack_id": "account_access__troubleshoot__instructional__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
-          "pack_reply": "You're right, I have what you've told me, so you won't need to repeat it. Did the reset email arrive?",
+          "pack_reply": "I'm really sorry about this, I can hear how frustrating it's been. You're right, I have what you've told me, so you won't need to repeat it. Did the reset email arrive?",
           "plain_checks": {
             "right_tone": false,
             "on_topic": false,
@@ -136,7 +136,7 @@
             "moves_forward": true
           },
           "pack_checks": {
-            "right_tone": false,
+            "right_tone": true,
             "on_topic": true,
             "no_repeat_burden": false,
             "moves_forward": true
@@ -149,9 +149,9 @@
       "turns": [
         {
           "customer": "This is the third time I'm calling about an overcharge. I want a manager.",
-          "pack_id": "billing__escalate__empathic",
+          "pack_id": "billing__escalate__empathic__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
-          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. Do you have the case number from your last call?",
+          "pack_reply": "I'm really sorry about this, I can hear how frustrating it's been. Understood. I'll walk you through what we need to check. Do you have the case number from your last call?",
           "plain_checks": {
             "right_tone": false,
             "on_topic": false,
@@ -167,7 +167,7 @@
         },
         {
           "customer": "Just get me someone who can fix it.",
-          "pack_id": "billing__escalate__empathic",
+          "pack_id": "billing__escalate__empathic__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
           "pack_reply": "I'm taking care of it now and I'll confirm the next step.",
           "plain_checks": {
@@ -190,7 +190,7 @@
       "turns": [
         {
           "customer": "The box arrived crushed and the blender inside is broken.",
-          "pack_id": "shipping__troubleshoot__empathic",
+          "pack_id": "shipping__troubleshoot__empathic__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
           "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. What's your order number?",
           "plain_checks": {
@@ -208,7 +208,7 @@
         },
         {
           "customer": "Order 771032.",
-          "pack_id": "shipping__troubleshoot__empathic",
+          "pack_id": "shipping__troubleshoot__empathic__2",
           "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
           "pack_reply": "When did tracking last update?",
           "plain_checks": {

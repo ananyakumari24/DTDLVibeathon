@@ -6,3 +6,5 @@ fastapi>=0.110.0
 uvicorn>=0.27.0
 httpx>=0.27.0
 openai>=1.30.0
+# voice agent; 1.3.x needs Python 3.10+, and .venv is 3.9
+livekit-agents[openai,silero]==1.2.18

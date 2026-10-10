@@ -20,9 +20,9 @@ from oneai.eval import REPORT_PATH
 from oneai.offline.cluster import CLUSTERS_PATH, PACKS_DIR
 from oneai.offline.pipeline import ingest
 from oneai.realtime.classify import get_live_classifier
-from oneai.realtime.faq import FaqTurn, plan_turn
-from oneai.realtime.reply import call_ends, plain_reply, suggest_reply
+from oneai.realtime.reply import plain_reply
 from oneai.realtime.tone import customer_tone
+from oneai.realtime.turn import CallState, describe_faq, take_turn
 from oneai.taxonomy import Insight, PatternPack, Transcript
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -37,7 +37,7 @@ COVERAGE = [
     ("New Pattern Packs created live for unseen topics", "realtime/live_packs.py", "done"),
     ("Guided reply for the voice bot", "realtime/reply.py", "done"),
     ("Apology first for complaints; thank-you sign-off once resolved", "realtime/tone.py, realtime/reply.py", "done"),
-    ("LiveKit integration", "livekit_adapter/agent.py", "written, not run (needs LiveKit keys)"),
+    ("LiveKit integration (pack + FAQ steps on voice)", "livekit_adapter/agent.py, realtime/turn.py", "done"),
     ("Evaluation: intent accuracy, unresolved calls, engagement", "eval.py, ab_demo.py", "done"),
 ]
 
@@ -142,50 +142,32 @@ def classify_turn(body: TextIn) -> ClassifyOut:
     return ClassifyOut(pack=pack, similarity=round(score, 4), latency_ms=round(ms, 2))
 
 
-def _describe_faq(faq: Optional[FaqTurn]) -> Optional[str]:
-    if faq is None:
-        return None
-    if faq.kind == "steps":
-        where = f"step {faq.step + 1}/{faq.total}"
-    elif faq.kind == "aside":
-        where = f"off-topic, holding step {faq.step + 1}/{faq.total}"
-    else:
-        where = faq.kind.replace("_", " ")
-    text = f"{faq.entry['id']} · {faq.entry['intent']} · {where}"
-    if faq.detour:
-        text += " · side question"
-    if faq.paused:
-        text += f" · {faq.paused[0]} paused"
-    if faq.resume:
-        text += f" · back to {faq.resume.entry['id']} step {faq.resume.step + 1}/{faq.resume.total}"
-    return text
-
-
 @app.post("/reply", response_model=ReplyOut)
 def reply(body: ReplyIn) -> ReplyOut:
-    pack, score, ms, created = get_live_classifier().classify_or_create(
-        " ".join(body.said_before + [body.text]), latest=body.text, current=body.pack_id
+    state = CallState(
+        said=list(body.said_before),
+        history=list(body.history),
+        pack_id=body.pack_id,
+        faq_id=body.faq_id,
+        faq_step=body.faq_step,
+        paused_faq_id=body.paused_faq_id,
+        paused_faq_step=body.paused_faq_step,
     )
-    faq = plan_turn(body.text, body.faq_id, body.faq_step, body.paused_faq_id, body.paused_faq_step)
-    ended = call_ends(body.text, faq, body.history)
-    # After a side question the reply already went back to the paused flow, so that's what continues.
-    current = (faq.resume or faq) if faq else None
-    in_progress = current is not None and current.next_step is not None and not ended
-    paused = faq.paused if faq is not None and not ended else None
+    turn = take_turn(body.text, state)
     return ReplyOut(
-        faq_id=current.entry["id"] if in_progress else None,
-        faq_step=current.next_step if in_progress else 0,
-        paused_faq_id=paused[0] if paused else None,
-        paused_faq_step=paused[1] if paused else 0,
-        faq_used=_describe_faq(faq),
-        pack_id=pack.pack_id,
-        similarity=round(score, 4),
-        latency_ms=round(ms, 2),
-        is_placeholder=pack.is_placeholder,
-        pack_created=created,
+        faq_id=turn.faq_id,
+        faq_step=turn.faq_step,
+        paused_faq_id=turn.paused_faq_id,
+        paused_faq_step=turn.paused_faq_step,
+        faq_used=describe_faq(turn.faq),
+        pack_id=turn.pack.pack_id,
+        similarity=round(turn.similarity, 4),
+        latency_ms=round(turn.latency_ms, 2),
+        is_placeholder=turn.pack.is_placeholder,
+        pack_created=turn.pack_created,
         tone=customer_tone(body.text),
-        call_ended=ended,
-        pack_reply=suggest_reply(body.text, pack, body.history, faq),
+        call_ended=turn.ended,
+        pack_reply=turn.reply,
         plain_reply=plain_reply(body.text, body.history),
     )
 

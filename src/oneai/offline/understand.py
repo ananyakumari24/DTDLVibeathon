@@ -72,7 +72,7 @@ def understand_text(text: str, method: str = "auto") -> Dict[str, str]:
     if method == "zeroshot":
         return _zeroshot(text)
     if method == "llm" and not llm.available():
-        raise RuntimeError("OPENAI_API_KEY is not set")
+        raise RuntimeError("No AI key set (OPENAI_API_KEY or CURSOR_API_KEY)")
     try:
         return _llm(text) if llm.available() else _zeroshot(text)
     except Exception:

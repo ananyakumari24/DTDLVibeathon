@@ -14,7 +14,7 @@ import tempfile
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-os.environ.pop("OPENAI_API_KEY", None)  # template replies, so the checks are deterministic
+os.environ["OPENAI_API_KEY"] = os.environ["CURSOR_API_KEY"] = ""  # blank (not removed) so .env cannot fill them; template replies, so the checks are deterministic
 
 from fastapi.testclient import TestClient  # noqa: E402
 

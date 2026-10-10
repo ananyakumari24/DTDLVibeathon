@@ -89,7 +89,7 @@ def _summary(calls: List[Dict], key: str) -> Dict:
 def run(path: Path = HELDOUT_PATH) -> Dict:
     calls = [run_call(r["conv"]) for r in load_heldout(path)]
     return {
-        "reply_source": "llm" if llm.available() else "templates (no OPENAI_API_KEY)",
+        "reply_source": f"llm ({llm.provider()})" if llm.available() else "templates (no AI key)",
         "plain_bot": _summary(calls, "plain_checks"),
         "pattern_pack_bot": _summary(calls, "pack_checks"),
         "calls": calls,

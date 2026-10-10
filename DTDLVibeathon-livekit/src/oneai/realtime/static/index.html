@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OneAI dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; color: #1d1d1f; background: #f6f6f8; }
+  header { background: #111; color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header a { color: #ff4fa3; }
+  main { display: grid; grid-template-columns: 320px 1fr; gap: 1rem; padding: 1rem 2rem; }
+  section { background: #fff; border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px #0001; }
+  h2 { margin-top: 0; font-size: 1.05rem; }
+  #groups button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: .35rem .4rem; cursor: pointer; border-radius: 4px; font-size: .85rem; }
+  #groups button:hover, #groups button.active { background: #ffe3f1; }
+  .muted { color: #777; font-size: .8rem; }
+  ul { margin: .2rem 0 .8rem; padding-left: 1.2rem; }
+  textarea { width: 100%; box-sizing: border-box; height: 4rem; font: inherit; }
+  .replies { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: .8rem; }
+  .reply { border: 1px solid #ddd; border-radius: 6px; padding: .6rem; }
+  .reply.pack { border-color: #ff4fa3; }
+  table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+  td, th { border-bottom: 1px solid #eee; padding: .3rem; text-align: left; }
+  .full { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<header><strong>OneAI: Conversational Intelligence for Voice Support</strong><a href="/metrics">Metrics</a></header>
+<main>
+  <section>
+    <h2>Groups (intent × issue × style)</h2>
+    <div id="groups" class="muted">Loading…</div>
+  </section>
+  <section>
+    <h2>Pattern Pack</h2>
+    <div id="pack" class="muted">Pick a group on the left.</div>
+  </section>
+  <section class="full">
+    <h2>Try a live turn</h2>
+    <textarea id="turn">My card was charged twice for the same order.</textarea>
+    <button id="send">Send</button> <button id="reset">New call</button>
+    <span id="routing" class="muted"></span>
+    <div class="replies">
+      <div class="reply"><strong>Plain bot</strong><p id="plain"></p></div>
+      <div class="reply pack"><strong>Pattern-Pack bot</strong><p id="guided"></p></div>
+    </div>
+  </section>
+  <section class="full">
+    <h2>A/B results on held-out calls</h2>
+    <div id="ab" class="muted">Loading…</div>
+  </section>
+</main>
+<script>
+const el = (tag, text) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; return e; };
+const list = (items) => { const ul = el("ul"); items.forEach(i => ul.appendChild(el("li", i))); return ul; };
+
+async function loadGroups() {
+  const groups = await (await fetch("/clusters")).json();
+  const box = document.getElementById("groups");
+  box.textContent = "";
+  groups.forEach(g => {
+    const b = el("button", `${g.id}  (${g.member_call_ids.length})`);
+    b.onclick = () => { document.querySelectorAll("#groups button").forEach(x => x.classList.remove("active")); b.classList.add("active"); showPack(g.id); };
+    box.appendChild(b);
+  });
+}
+
+async function showPack(id) {
+  const box = document.getElementById("pack");
+  const res = await fetch(`/packs/${encodeURIComponent(id)}`);
+  box.textContent = "";
+  if (!res.ok) { box.textContent = "No pack built for this group yet."; return; }
+  const p = await res.json();
+  box.appendChild(el("p", `${p.issue} · ${p.intent} · ${p.style} · ${p.call_count} calls · built with ${p.built_with}`)).className = "muted";
+  const sections = [
+    ["Recommended opener", [p.recommended_opener]],
+    ["Style cue", [p.style_cue]],
+    ["Follow-up questions", p.follow_ups],
+    ["Top customer phrasings", p.top_customer_phrasings],
+    ["Agent patterns", p.agent_patterns],
+    ["Typical flow", p.typical_flow],
+    ["Friction alerts", p.friction_alerts.length ? p.friction_alerts : ["None seen in this group."]],
+  ];
+  sections.forEach(([title, items]) => { box.appendChild(el("strong", title)); box.appendChild(list(items)); });
+}
+
+let saidBefore = [], plainHistory = [], packHistory = [];
+async function sendTurn() {
+  const text = document.getElementById("turn").value.trim();
+  if (!text) return;
+  const res = await fetch("/reply", { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ text, said_before: saidBefore, history: packHistory }) });
+  const r = await res.json();
+  saidBefore.push(text); plainHistory.push(r.plain_reply); packHistory.push(r.pack_reply);
+  document.getElementById("routing").textContent = ` → ${r.pack_id} (similarity ${r.similarity}, ${r.latency_ms} ms)`;
+  document.getElementById("plain").textContent = r.plain_reply;
+  document.getElementById("guided").textContent = r.pack_reply;
+  showPack(r.pack_id);
+}
+function resetCall() { saidBefore = []; plainHistory = []; packHistory = []; ["routing", "plain", "guided"].forEach(i => document.getElementById(i).textContent = ""); }
+
+async function loadAB() {
+  const box = document.getElementById("ab");
+  const res = await fetch("/ab");
+  box.textContent = "";
+  if (!res.ok) { box.textContent = "Run scripts/run.sh pipeline to create the A/B report."; return; }
+  const ab = await res.json();
+  box.appendChild(el("p", `Replies from: ${ab.reply_source}`)).className = "muted";
+  const t = el("table");
+  const head = el("tr"); ["", "Engagement", "Right tone", "On topic", "No repeat burden", "Moves forward"].forEach(h => head.appendChild(el("th", h)));
+  t.appendChild(head);
+  [["Plain bot", ab.plain_bot], ["Pattern-Pack bot", ab.pattern_pack_bot]].forEach(([name, s]) => {
+    const row = el("tr");
+    [name, s.engagement_score, s.checks.right_tone, s.checks.on_topic, s.checks.no_repeat_burden, s.checks.moves_forward]
+      .forEach((v, i) => row.appendChild(el("td", i === 0 ? v : `${Math.round(v * 100)}%`)));
+    t.appendChild(row);
+  });
+  box.appendChild(t);
+}
+
+document.getElementById("send").onclick = sendTurn;
+document.getElementById("reset").onclick = resetCall;
+loadGroups(); loadAB();
+</script>
+</body>
+</html>

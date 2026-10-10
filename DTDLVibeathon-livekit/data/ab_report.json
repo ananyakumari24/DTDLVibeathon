@@ -1,0 +1,230 @@
+{
+  "reply_source": "templates (no OPENAI_API_KEY)",
+  "plain_bot": {
+    "engagement_score": 0.5,
+    "checks": {
+      "right_tone": 0.2,
+      "on_topic": 0.0,
+      "no_repeat_burden": 0.8,
+      "moves_forward": 1.0
+    },
+    "replies": 10
+  },
+  "pattern_pack_bot": {
+    "engagement_score": 0.8,
+    "checks": {
+      "right_tone": 0.6,
+      "on_topic": 0.7,
+      "no_repeat_burden": 0.9,
+      "moves_forward": 1.0
+    },
+    "replies": 10
+  },
+  "calls": [
+    {
+      "call_id": "heldout_01",
+      "turns": [
+        {
+          "customer": "Hey, my card got hit with the same subscription fee two times this month.",
+          "pack_id": "billing__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm really sorry about that \u2014 this sounds stressful. I can help sort it out. Which month shows the wrong charge?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        },
+        {
+          "customer": "Both are $12.99 on the 2nd.",
+          "pack_id": "billing__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "Was it the same card both times?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": false,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        }
+      ]
+    },
+    {
+      "call_id": "heldout_02",
+      "turns": [
+        {
+          "customer": "Can you tell me when my order is supposed to get here?",
+          "pack_id": "shipping__info__instructional",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "Understood. I'll walk you through what we need to check. What's your order number?",
+          "plain_checks": {
+            "right_tone": true,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        },
+        {
+          "customer": "It's 554210.",
+          "pack_id": "shipping__info__instructional",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm taking care of it now and I'll confirm the next step.",
+          "plain_checks": {
+            "right_tone": true,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        }
+      ]
+    },
+    {
+      "call_id": "heldout_03",
+      "turns": [
+        {
+          "customer": "The app keeps saying my password is wrong but I know it's right.",
+          "pack_id": "account_access__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. Which email is on the account?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        },
+        {
+          "customer": "I already tried that twice.",
+          "pack_id": "account_access__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "You're right, I have what you've told me, so you won't need to repeat it. Did the reset email arrive?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": false,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": false,
+            "on_topic": true,
+            "no_repeat_burden": false,
+            "moves_forward": true
+          }
+        }
+      ]
+    },
+    {
+      "call_id": "heldout_04",
+      "turns": [
+        {
+          "customer": "This is the third time I'm calling about an overcharge. I want a manager.",
+          "pack_id": "billing__escalate__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. Do you have the case number from your last call?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": false,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        },
+        {
+          "customer": "Just get me someone who can fix it.",
+          "pack_id": "billing__escalate__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm taking care of it now and I'll confirm the next step.",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        }
+      ]
+    },
+    {
+      "call_id": "heldout_05",
+      "turns": [
+        {
+          "customer": "The box arrived crushed and the blender inside is broken.",
+          "pack_id": "shipping__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. What's your order number?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": true,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        },
+        {
+          "customer": "Order 771032.",
+          "pack_id": "shipping__troubleshoot__empathic",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "When did tracking last update?",
+          "plain_checks": {
+            "right_tone": false,
+            "on_topic": false,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          },
+          "pack_checks": {
+            "right_tone": false,
+            "on_topic": true,
+            "no_repeat_burden": true,
+            "moves_forward": true
+          }
+        }
+      ]
+    }
+  ]
+}

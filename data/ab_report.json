@@ -1,5 +1,5 @@
 {
-  "reply_source": "templates (no OPENAI_API_KEY)",
+  "reply_source": "templates (no AI key)",
   "plain_bot": {
     "engagement_score": 0.5,
     "checks": {

@@ -5,3 +5,4 @@ __pycache__/
 .env
 data/voice_calls.jsonl
 catalog.json
+.sf/

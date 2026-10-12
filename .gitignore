@@ -3,3 +3,5 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .env
+data/voice_calls.jsonl
+catalog.json

@@ -3,7 +3,8 @@
 On each finished customer turn it runs the same turn as the API's /reply (realtime/turn.py):
 pick the Pattern Pack, plan the FAQ step, write the guided reply. The bot speaks that reply, so
 the phone line gives FAQ steps one per turn, holds them through side questions and signs off,
-exactly like the dashboard. The session's LLM is not asked to reply on its own.
+exactly like the dashboard. The session's LLM is not asked to reply on its own. Each turn is
+also written to the call log (realtime/call_log.py), so the dashboard shows the call live.
 
 Run (LiveKit keys in .env; OPENAI_API_KEY optional):
     pip install "livekit-agents[openai,silero]~=1.0"
@@ -15,6 +16,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from oneai.realtime.call_log import log_call_closed, log_call_start, log_turn
 from oneai.realtime.classify import get_live_classifier
 from oneai.realtime.faq import get_faq
 from oneai.realtime.turn import CallState, describe_faq, take_turn
@@ -25,7 +27,7 @@ BASE_INSTRUCTIONS = "You are a voice support agent. Keep replies to one or two s
 GREETING = "Hi, thanks for calling support. How can I help you today?"
 
 
-def _build_agent():
+def _build_agent(call_id: str):
     from livekit.agents import Agent, ChatContext, ChatMessage, StopResponse
 
     class OneAIAgent(Agent):
@@ -40,6 +42,7 @@ def _build_agent():
             # Off the event loop: the classifier embeds the turn, and the reply may call an LLM.
             turn = await asyncio.to_thread(take_turn, text, self.call)
             self.call.record(text, turn)
+            log_turn(call_id, text, turn)
             log.info(
                 "customer said %r -> pack %s (%.1f ms) · faq %s%s",
                 text,
@@ -71,7 +74,7 @@ def _voice_models():
     return LIVEKIT_STT, LIVEKIT_LLM, LIVEKIT_TTS
 
 
-def _log_session(session) -> None:
+def _log_session(session, call_id: str) -> None:
     session.on("agent_state_changed", lambda ev: log.info("agent %s -> %s", ev.old_state, ev.new_state))
     session.on("user_state_changed", lambda ev: log.info("caller %s -> %s", ev.old_state, ev.new_state))
     session.on(
@@ -84,6 +87,7 @@ def _log_session(session) -> None:
         and log.info("bot said: %r", ev.item.text_content),
     )
     session.on("error", lambda ev: log.error("session error from %s: %s", type(ev.source).__name__, ev.error))
+    session.on("close", lambda ev: log_call_closed(call_id, getattr(ev.reason, "value", None)))
 
 
 def prewarm(proc) -> None:
@@ -104,8 +108,10 @@ async def entrypoint(ctx) -> None:
     log.info("voice models: stt=%s llm=%s tts=%s", stt, llm_model, tts)
     vad = ctx.proc.userdata.get("vad") or silero.VAD.load()
     session = AgentSession(stt=stt, llm=llm_model, tts=tts, vad=vad)
-    _log_session(session)
-    await session.start(room=ctx.room, agent=_build_agent())
+    call_id = ctx.job.id
+    _log_session(session, call_id)
+    await session.start(room=ctx.room, agent=_build_agent(call_id))
+    log_call_start(call_id, ctx.room.name, GREETING)
     await session.say(GREETING, allow_interruptions=False)
 
 

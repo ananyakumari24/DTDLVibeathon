@@ -19,6 +19,7 @@ from oneai.ab_demo import AB_REPORT_PATH
 from oneai.eval import REPORT_PATH
 from oneai.offline.cluster import CLUSTERS_PATH, PACKS_DIR
 from oneai.offline.pipeline import ingest
+from oneai.realtime.call_log import recent_calls
 from oneai.realtime.classify import get_live_classifier
 from oneai.realtime.reply import plain_reply
 from oneai.realtime.tone import customer_tone
@@ -38,6 +39,7 @@ COVERAGE = [
     ("Guided reply for the voice bot", "realtime/reply.py", "done"),
     ("Apology first for complaints; thank-you sign-off once resolved", "realtime/tone.py, realtime/reply.py", "done"),
     ("LiveKit integration (pack + FAQ steps on voice)", "livekit_adapter/agent.py, realtime/turn.py", "done"),
+    ("Live voice calls on the dashboard", "realtime/call_log.py", "done"),
     ("Evaluation: intent accuracy, unresolved calls, engagement", "eval.py, ab_demo.py", "done"),
 ]
 
@@ -170,6 +172,12 @@ def reply(body: ReplyIn) -> ReplyOut:
         pack_reply=turn.reply,
         plain_reply=plain_reply(body.text, body.history),
     )
+
+
+@app.get("/calls")
+def list_calls(limit: int = 10) -> List[dict]:
+    """Recent LiveKit voice calls, newest first: what the caller said, the pack chosen, the bot's reply."""
+    return recent_calls(limit)
 
 
 @app.post("/ingest", response_model=List[Insight])

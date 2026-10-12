@@ -28,6 +28,14 @@
   .full { grid-column: 1 / -1; }
   .badge.tone { background: #e8590c; }
   .ended { text-align: center; color: #2b8a3e; font-weight: 600; margin: .4rem 0 0; }
+  .call { border: 1px solid #eee; border-radius: 6px; padding: .6rem .8rem; margin-top: .8rem; }
+  .call-head { display: flex; gap: .5rem; align-items: center; margin: 0 0 .5rem; }
+  .call .turn { border-top: 1px dashed #eee; padding-top: .5rem; margin-top: .5rem; }
+  .call .bot { margin: 0; }
+  .call .bot::before { content: "Bot: "; font-weight: 600; color: #ff4fa3; }
+  .routing a { color: inherit; }
+  .badge.live { background: #2b8a3e; }
+  .badge.closed { background: #868e96; }
   .badge { background: #ff4fa3; color: #fff; border-radius: 4px; padding: 0 .35rem; font-size: .75rem; font-weight: 600; }
 </style>
 </head>
@@ -43,6 +51,11 @@
   <section>
     <h2>Pattern Pack</h2>
     <div id="pack" class="muted">Pick a group on the left.</div>
+  </section>
+  <section class="full">
+    <h2>Live voice calls</h2>
+    <p class="muted">Calls on the LiveKit phone line, updated as they happen: what the caller said, the pack chosen, and the bot's reply. Start the voice agent with <code>scripts/run.sh livekit</code>.</p>
+    <div id="calls" class="muted">No voice calls yet.</div>
   </section>
   <section class="full">
     <h2>Try a live turn</h2>
@@ -112,20 +125,27 @@ async function showPack(id) {
   sections.forEach(([title, items]) => { box.appendChild(el("strong", title)); box.appendChild(list(items)); });
 }
 
-let saidBefore = [], plainHistory = [], packHistory = [], faqState = { faq_id: null, faq_step: 0, paused_faq_id: null, paused_faq_step: 0 }, lastPack = null;
-function appendTurn(text, r) {
-  const box = document.getElementById("transcript");
-  const turn = el("div"); turn.className = "turn";
-  turn.appendChild(el("p", `Customer: ${text}`)).className = "customer";
-  const unknown = r.pack_id.startsWith("unknown__") || r.is_placeholder && r.pack_id.includes("clarify");
+const isUnknown = (r) => r.pack_id.startsWith("unknown__") || r.is_placeholder && r.pack_id.includes("clarify");
+function routingLine(r) {
+  const unknown = isUnknown(r);
   const routeLabel = unknown
     ? `→ no confident pack (similarity ${r.similarity}, ${r.latency_ms} ms) — clarifying`
     : r.pack_created
     ? `→ no mined pack matched (best similarity ${r.similarity}) — created new pack ${r.pack_id} (${r.latency_ms} ms) · ${r.faq_used ? 'FAQ ' + r.faq_used : 'no FAQ match'}`
     : `→ ${r.pack_id} (similarity ${r.similarity}, ${r.latency_ms} ms) · ${r.faq_used ? 'FAQ ' + r.faq_used : 'no FAQ match'}`;
-  const routing = turn.appendChild(el("p", routeLabel)); routing.className = "routing muted";
+  const routing = el("p", routeLabel); routing.className = "routing muted";
   if (r.pack_created) { const b = el("span", "NEW PACK"); b.className = "badge"; routing.prepend(b, " "); }
   if (r.tone && r.tone !== "neutral") { const b = el("span", r.tone === "upset" ? "UPSET → APOLOGY" : "COMPLAINT → APOLOGY"); b.className = "badge tone"; routing.prepend(b, " "); }
+  return routing;
+}
+
+let saidBefore = [], plainHistory = [], packHistory = [], faqState = { faq_id: null, faq_step: 0, paused_faq_id: null, paused_faq_step: 0 }, lastPack = null;
+function appendTurn(text, r) {
+  const box = document.getElementById("transcript");
+  const turn = el("div"); turn.className = "turn";
+  turn.appendChild(el("p", `Customer: ${text}`)).className = "customer";
+  const unknown = isUnknown(r);
+  turn.appendChild(routingLine(r));
   const replies = el("div"); replies.className = "replies";
   const plainBox = el("div"); plainBox.className = "reply";
   plainBox.appendChild(el("strong", "Plain bot")); plainBox.appendChild(el("p", r.plain_reply));
@@ -168,6 +188,46 @@ function resetCall() {
   document.getElementById("send").disabled = false;
 }
 
+let lastCalls = "";
+async function loadCalls() {
+  const res = await fetch("/calls");
+  if (!res.ok) return;
+  const raw = await res.text();
+  if (raw === lastCalls) return;  // unchanged: keep the page still
+  lastCalls = raw;
+  const calls = JSON.parse(raw);
+  const box = document.getElementById("calls");
+  if (!calls.length) return;
+  box.textContent = ""; box.className = "";
+  const status = { live: ["LIVE", "live"], resolved: ["RESOLVED", "live"], closed: ["HUNG UP", "closed"] };
+  calls.forEach(c => {
+    const card = el("div"); card.className = "call";
+    const head = el("p"); head.className = "call-head";
+    const [label, cls] = status[c.status];
+    const badge = el("span", label); badge.className = `badge ${cls}`;
+    const when = new Date(c.started * 1000).toLocaleTimeString();
+    const meta = el("span", `Call ${c.call_id.slice(-6)} · room ${c.room || "?"} · started ${when} · ${c.turns.length} turn${c.turns.length === 1 ? "" : "s"}`);
+    meta.className = "muted";
+    head.append(badge, meta);
+    card.appendChild(head);
+    if (c.greeting) card.appendChild(el("p", c.greeting)).className = "bot";
+    c.turns.forEach(t => {
+      const turn = el("div"); turn.className = "turn";
+      turn.appendChild(el("p", `Caller: ${t.said}`)).className = "customer";
+      const routing = turn.appendChild(routingLine(t));
+      if (!isUnknown(t)) {
+        const open = el("a", "view pack"); open.href = "#"; open.onclick = (e) => { e.preventDefault(); showPack(t.pack_id); window.scrollTo({ top: 0, behavior: "smooth" }); };
+        routing.append(" · ", open);
+      }
+      turn.appendChild(el("p", t.reply)).className = "bot";
+      if (t.call_ended) turn.appendChild(el("p", "Call ended: query resolved.")).className = "ended";
+      card.appendChild(turn);
+    });
+    box.appendChild(card);
+  });
+  if (calls.some(c => c.turns.some(t => t.pack_id.startsWith("live__")))) loadLivePacks();
+}
+
 async function loadAB() {
   const box = document.getElementById("ab");
   const res = await fetch("/ab");
@@ -189,7 +249,8 @@ async function loadAB() {
 
 document.getElementById("send").onclick = sendTurn;
 document.getElementById("reset").onclick = resetCall;
-loadGroups(); loadLivePacks(); loadAB();
+loadGroups(); loadLivePacks(); loadAB(); loadCalls();
+setInterval(loadCalls, 2000);
 </script>
 </body>
 </html>

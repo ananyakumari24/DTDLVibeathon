@@ -133,6 +133,14 @@ def draft_pack(text: str) -> Optional[dict]:
     return _rules_draft(text)
 
 
+def clear_live_packs(packs_dir: Path = LIVE_PACKS_DIR) -> int:
+    """Delete every saved live pack. Returns how many were removed."""
+    files = list(packs_dir.glob("*.json"))
+    for f in files:
+        f.unlink()
+    return len(files)
+
+
 def is_live(pack: PatternPack) -> bool:
     return pack.pack_id.startswith(LIVE_PREFIX)
 
@@ -221,6 +229,13 @@ class LivePackStore:
             self._save(pack)
         return pack, True
 
+    def clear(self) -> None:
+        """Forget every live pack, on disk and in memory."""
+        with self._lock:
+            clear_live_packs(self.dir)
+            self.packs = []
+            self._rebuild()
+
     def get(self, pack_id: str) -> Optional[PatternPack]:
         return next((p for p in self.packs if p.pack_id == pack_id), None)
 
@@ -229,3 +244,7 @@ class LivePackStore:
             p.model_dump(include={"pack_id", "issue", "intent", "style", "call_count", "built_with", "top_customer_phrasings"})
             for p in self.packs
         ]
+
+
+if __name__ == "__main__":
+    print(f"Cleared {clear_live_packs()} live Pattern Packs ({LIVE_PACKS_DIR}).")

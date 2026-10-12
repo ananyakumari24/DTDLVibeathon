@@ -53,7 +53,7 @@
     <div id="pack" class="muted">Pick a group on the left.</div>
   </section>
   <section class="full">
-    <h2>Live voice calls</h2>
+    <h2 class="call-head">Live voice calls <button id="clear-calls" onclick="clearCalls()">Clear calls and live packs</button></h2>
     <p class="muted">Calls on the LiveKit phone line, updated as they happen: what the caller said, the pack chosen, and the bot's reply. Start the voice agent with <code>scripts/run.sh livekit</code>.</p>
     <div id="calls" class="muted">No voice calls yet.</div>
   </section>
@@ -90,7 +90,7 @@ async function loadLivePacks() {
   if (!res.ok) return;
   const packs = await res.json();
   const box = document.getElementById("live-groups");
-  if (!packs.length) return;
+  if (!packs.length) { box.textContent = "None yet. Send a turn on a topic no group covers."; return; }
   box.textContent = "";
   packs.forEach(p => {
     const b = el("button", `${p.pack_id}  (${p.call_count})`);
@@ -197,7 +197,7 @@ async function loadCalls() {
   lastCalls = raw;
   const calls = JSON.parse(raw);
   const box = document.getElementById("calls");
-  if (!calls.length) return;
+  if (!calls.length) { box.textContent = "No voice calls yet."; box.className = "muted"; return; }
   box.textContent = ""; box.className = "";
   const status = { live: ["LIVE", "live"], resolved: ["RESOLVED", "live"], closed: ["HUNG UP", "closed"] };
   calls.forEach(c => {
@@ -226,6 +226,13 @@ async function loadCalls() {
     box.appendChild(card);
   });
   if (calls.some(c => c.turns.some(t => t.pack_id.startsWith("live__")))) loadLivePacks();
+}
+
+async function clearCalls() {
+  if (!confirm("Clear the transcripts of all earlier voice calls and the packs created live on them?")) return;
+  await Promise.all([fetch("/calls", { method: "DELETE" }), fetch("/live-packs", { method: "DELETE" })]);
+  lastCalls = "";
+  loadCalls(); loadLivePacks();
 }
 
 async function loadAB() {

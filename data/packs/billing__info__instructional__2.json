@@ -6,10 +6,12 @@
   "top_customer_phrasings": [
     "When is my next billing date?"
   ],
-  "recommended_opener": "Understood. I'll walk you through what we need to check.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Answer directly, then say where they can find it next time.",
+  "recommended_opener": "I can help you find your next billing date. First, I just need to confirm your account.",
+  "style_cue": "Keep it short and calm. There is no problem to apologize for, so skip apologies. Ask for one verification detail at a time and confirm each one. State the billing date and amount clearly, then repeat the date. Briefly explain where to find it next time, such as the Billing section of the account or app. Then offer one optional next step.",
   "follow_ups": [
-    "Which line on the bill would you like me to explain?"
+    "Could you confirm the email or phone number on the account?",
+    "Would you like me to tell you the amount due on that date as well?",
+    "Would you like a reminder before your next billing date?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (20% of calls).",
@@ -416,6 +418,6 @@
     -0.03415999934077263
   ],
   "call_count": 10,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

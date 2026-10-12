@@ -6,11 +6,12 @@
   "top_customer_phrasings": [
     "I was charged twice for last month and I'm pretty frustrated."
   ],
-  "recommended_opener": "I can help with that. Let's go step by step.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Get one key detail, then say what you'll fix and when.",
+  "recommended_opener": "I'm sorry about the double charge. I can help sort it out. Let's go step by step.",
+  "style_cue": "Acknowledge the frustration once, briefly, then move into clear, short steps. Ask for one detail at a time and confirm each answer before moving on. Don't ask for anything the caller already said (for example, they've said it was last month). Once you have the key details, state plainly what you'll do, such as reversing or refunding the duplicate charge, give a realistic timeframe, and say you'll confirm by email.",
   "follow_ups": [
-    "Which month shows the wrong charge?",
-    "Was it the same card both times?"
+    "What was the amount of each charge?",
+    "Were both charges on the same card?",
+    "Do both charges show as completed, or is one still pending?"
   ],
   "friction_alerts": [
     "Customers are often upset; acknowledge that before solving (100% of calls).",
@@ -417,6 +418,6 @@
     0.0029800001066178083
   ],
   "call_count": 10,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

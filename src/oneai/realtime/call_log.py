@@ -52,6 +52,11 @@ def log_call_closed(call_id: str, reason: Optional[str] = None) -> None:
     _write({"event": "closed", "call_id": call_id, "reason": reason})
 
 
+def clear_calls(path: Path = CALL_LOG_PATH) -> None:
+    """Start fresh: drop every logged call so the dashboard only shows calls from now on."""
+    path.unlink(missing_ok=True)
+
+
 def recent_calls(limit: int = 10, path: Path = CALL_LOG_PATH) -> List[dict]:
     """Newest calls first, each with its turns in order."""
     if not path.exists():
@@ -79,3 +84,8 @@ def recent_calls(limit: int = 10, path: Path = CALL_LOG_PATH) -> List[dict]:
         elif kind == "closed" and call["status"] == "live":
             call["status"] = "closed"
     return sorted(calls.values(), key=lambda c: c["updated"], reverse=True)[:limit]
+
+
+if __name__ == "__main__":
+    clear_calls()
+    print(f"Cleared voice call transcripts ({CALL_LOG_PATH}).")

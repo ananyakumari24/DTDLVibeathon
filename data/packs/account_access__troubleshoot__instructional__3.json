@@ -6,11 +6,12 @@
   "top_customer_phrasings": [
     "Where do I manage two-factor authentication?"
   ],
-  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Get one key detail, then say what you'll fix and when.",
+  "recommended_opener": "I can help with that. Let's go step by step.",
+  "style_cue": "Treat this as a how-to request, so skip apologies unless the caller says they're locked out. Give one short spoken step at a time, such as 'Open Settings, then Security,' and wait for the caller to confirm before the next step. Ask one question at a time. If the caller can't sign in or has lost their 2FA device, switch to account recovery, say what you'll do, and say when they'll get an email confirmation.",
   "follow_ups": [
-    "Which email is on the account?",
-    "Did the reset email arrive?"
+    "Are you using the app or the website?",
+    "Can you sign in to your account right now?",
+    "Do you still have the phone or authenticator app you set up for two-factor?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (20% of calls).",
@@ -417,6 +418,6 @@
     0.004259999841451645
   ],
   "call_count": 10,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

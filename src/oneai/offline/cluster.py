@@ -12,6 +12,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
+from oneai import llm
 from oneai.offline.agent import extract_agent_style
 from oneai.offline.embeddings import backend, embed_many
 from oneai.offline.normalize import load_conversations
@@ -60,18 +61,14 @@ def build_clusters(conversations: List[Conversation], method: str = "auto", k: i
     for i, label in enumerate(kmeans.labels_):
         groups[int(label)].append(i)
 
-    labels_cache: Dict[int, Dict[str, str]] = {}
-    styles_cache: Dict[int, str] = {}
+    # Every call gets labelled, so do it up front and in parallel (one LLM round trip each).
+    labelled = llm.pmap(lambda c: (understand(c, method=method), extract_agent_style(c)), conversations)
 
     def issue_intent(i: int) -> Dict[str, str]:
-        if i not in labels_cache:
-            labels_cache[i] = understand(conversations[i], method=method)
-        return labels_cache[i]
+        return labelled[i][0]
 
     def style(i: int) -> str:
-        if i not in styles_cache:
-            styles_cache[i] = extract_agent_style(conversations[i])
-        return styles_cache[i]
+        return labelled[i][1]
 
     clusters: List[Cluster] = []
     seen_ids: Counter = Counter()

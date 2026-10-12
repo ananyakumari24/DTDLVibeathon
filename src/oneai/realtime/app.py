@@ -19,8 +19,9 @@ from oneai.ab_demo import AB_REPORT_PATH
 from oneai.eval import REPORT_PATH
 from oneai.offline.cluster import CLUSTERS_PATH, PACKS_DIR
 from oneai.offline.pipeline import ingest
-from oneai.realtime.call_log import recent_calls
+from oneai.realtime.call_log import clear_calls, recent_calls
 from oneai.realtime.classify import get_live_classifier
+from oneai.realtime.live_packs import clear_live_packs
 from oneai.realtime.reply import plain_reply
 from oneai.realtime.tone import customer_tone
 from oneai.realtime.turn import CallState, describe_faq, take_turn
@@ -127,6 +128,16 @@ def list_live_packs() -> List[dict]:
     return get_live_classifier().live.summary()
 
 
+@app.delete("/live-packs")
+def delete_live_packs() -> dict:
+    """Drop the packs created live on earlier calls, so new topics are learned from scratch."""
+    if CLUSTERS_PATH.exists():
+        get_live_classifier().live.clear()
+    else:
+        clear_live_packs()
+    return {"cleared": True}
+
+
 @app.get("/packs/{pack_id}")
 def get_pack(pack_id: str) -> dict:
     live = get_live_classifier().live.get(pack_id)
@@ -178,6 +189,13 @@ def reply(body: ReplyIn) -> ReplyOut:
 def list_calls(limit: int = 10) -> List[dict]:
     """Recent LiveKit voice calls, newest first: what the caller said, the pack chosen, the bot's reply."""
     return recent_calls(limit)
+
+
+@app.delete("/calls")
+def delete_calls() -> dict:
+    """Clear the transcripts of earlier voice calls."""
+    clear_calls()
+    return {"cleared": True}
 
 
 @app.post("/ingest", response_model=List[Insight])

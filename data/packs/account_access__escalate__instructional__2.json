@@ -1,16 +1,17 @@
 {
-  "pack_id": "account_access__troubleshoot__instructional__4",
-  "intent": "troubleshoot",
+  "pack_id": "account_access__escalate__instructional__2",
+  "intent": "escalate",
   "issue": "account_access",
   "style": "instructional",
   "top_customer_phrasings": [
     "I've reset my password three times — escalate this."
   ],
-  "recommended_opener": "I can help with that. Let's go step by step.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Get one key detail, then say what you'll fix and when.",
+  "recommended_opener": "I'm sorry the resets haven't worked. I'll escalate this for you now, and I just need a couple of quick details first.",
+  "style_cue": "Acknowledge the frustration once, briefly, and don't ask the caller to reset their password again. Confirm right away that you're escalating. Then ask for one detail at a time and repeat each answer back to confirm it. Keep sentences short for voice. Before ending, give the reference number slowly, state when and how the specialist will follow up, and say a confirmation email is on its way.",
   "follow_ups": [
-    "Which email is on the account?",
-    "Did the reset email arrive?"
+    "What email address is on the account?",
+    "What happens when you try to sign in with the new password — do you see an error message?",
+    "What's the best phone number and time for the specialist to call you back?"
   ],
   "friction_alerts": [
     "Many of these are repeat contacts; acknowledge the earlier calls (100% of calls).",
@@ -417,6 +418,6 @@
     -0.0437299981713295
   ],
   "call_count": 8,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

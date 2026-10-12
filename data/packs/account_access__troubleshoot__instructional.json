@@ -6,11 +6,12 @@
   "top_customer_phrasings": [
     "My account is locked and the unlock email never arrives."
   ],
-  "recommended_opener": "Understood. I'll walk you through what we need to check.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Get one key detail, then say what you'll fix and when.",
+  "recommended_opener": "I'm sorry you're locked out. Let's fix it step by step.",
+  "style_cue": "Acknowledge the lockout briefly, then guide one step at a time and ask for only one detail per turn. Confirm each answer back, check spam or junk folders and the email address on file, then say clearly what you'll do next, such as resending or manually unlocking, and when they'll get email confirmation. Keep sentences short for voice.",
   "follow_ups": [
-    "Which email is on the account?",
-    "Did the reset email arrive?"
+    "What email address is on the account?",
+    "Have you checked your spam or junk folder?",
+    "Shall I resend the unlock email now?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (13% of calls).",
@@ -417,6 +418,6 @@
     -0.06131000071763992
   ],
   "call_count": 23,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

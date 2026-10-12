@@ -66,8 +66,8 @@ def _voice_models():
     """OpenAI plugins with an OpenAI key, otherwise LiveKit Cloud's hosted models (LiveKit keys only)."""
     from oneai import llm
 
-    # provider(), not available(): a Cursor key has no speech models, so it falls back to LiveKit's.
-    if llm.provider() == "openai":
+    # The OpenAI key itself, not available(): Claude and Cursor have no speech models, so they use LiveKit's.
+    if llm.has_openai_key():
         from livekit.plugins import openai
 
         return openai.STT(), openai.LLM(), openai.TTS()

@@ -6,10 +6,12 @@
   "top_customer_phrasings": [
     "Where is my package? Tracking hasn't updated."
   ],
-  "recommended_opener": "I'm really sorry about that — this sounds stressful. I can help sort it out.",
-  "style_cue": "Acknowledge how the customer feels before anything else. Answer directly, then say where they can find it next time.",
+  "recommended_opener": "I'm sorry your tracking hasn't updated. I know that's stressful when you're waiting on a package. I can look into it for you right now.",
+  "style_cue": "Briefly acknowledge the worry, then move quickly to finding the package. Keep sentences short and easy to follow by ear. Confirm details back to the caller, give the current status plainly, and say what happens next and how they'll hear from you, for example by email. Avoid repeating the same filler phrases.",
   "follow_ups": [
-    "What's your order number?"
+    "Could you tell me your order number?",
+    "What's the delivery address or ZIP code on the order?",
+    "When did the tracking last update?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (29% of calls).",
@@ -417,6 +419,6 @@
     0.04780999943614006
   ],
   "call_count": 17,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

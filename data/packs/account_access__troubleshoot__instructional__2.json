@@ -6,11 +6,12 @@
   "top_customer_phrasings": [
     "How do I reset my password from the mobile app?"
   ],
-  "recommended_opener": "Understood. I'll walk you through what we need to check.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Get one key detail, then say what you'll fix and when.",
+  "recommended_opener": "I can help you reset your password in the app. Let's go step by step.",
+  "style_cue": "Give one short instruction at a time and wait for the caller to confirm before moving on. Walk them through the app's sign-in screen to the 'Forgot password' option. Check the account email and whether the reset email or code arrived. If it didn't, tell them clearly what you'll do next and that you'll confirm by email. Keep sentences brief and avoid on-screen jargon the caller can't see.",
   "follow_ups": [
-    "Which email is on the account?",
-    "Did the reset email arrive?"
+    "Which email address is on your account?",
+    "Do you see the 'Forgot password' link on the app's sign-in screen?",
+    "Did the reset email or code arrive, including in your spam folder?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (12% of calls).",
@@ -417,6 +418,6 @@
     -0.06599999964237213
   ],
   "call_count": 17,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

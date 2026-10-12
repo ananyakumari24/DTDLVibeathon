@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: scripts/run.sh [generate|pipeline|api|mock|ab|eval|livekit] [extra args]
+# Usage: scripts/run.sh [generate|pipeline|api|mock|ab|eval|livekit|clear] [extra args]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PYTHONPATH=src
@@ -20,5 +20,6 @@ case "$cmd" in
   ab) "$py" -m oneai.ab_demo "$@" ;;
   eval) "$py" -m oneai.eval "$@" ;;
   livekit) "$py" -m oneai.livekit_adapter.agent dev "$@" ;;
+  clear) "$py" -m oneai.realtime.call_log && "$py" -m oneai.realtime.live_packs ;;
   *) echo "unknown command: $cmd" >&2; exit 1 ;;
 esac

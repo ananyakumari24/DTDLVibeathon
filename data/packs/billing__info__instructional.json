@@ -6,10 +6,12 @@
   "top_customer_phrasings": [
     "Can you explain what this line item on my bill means?"
   ],
-  "recommended_opener": "I can help with that. Let's go step by step.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Answer directly, then say where they can find it next time.",
+  "recommended_opener": "I can help explain that charge. Which line item on your bill are you asking about?",
+  "style_cue": "Use a calm, clear, step-by-step tone and ask for one detail at a time. Explain the charge in plain language first, then mention where they can find this information on their bill or account next time. Apologize only if the customer sounds upset, and don't promise emails or follow-up actions unless something actually needs doing.",
   "follow_ups": [
-    "Which line on the bill would you like me to explain?"
+    "What's the name or amount of the charge you're asking about?",
+    "Which billing period or statement date is this from?",
+    "Is there anything else on your bill you'd like me to explain?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (14% of calls)."
@@ -415,6 +417,6 @@
     -0.06605999916791916
   ],
   "call_count": 7,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

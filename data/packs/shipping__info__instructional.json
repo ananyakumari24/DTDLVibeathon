@@ -6,10 +6,12 @@
   "top_customer_phrasings": [
     "What's the estimated delivery date for my order?"
   ],
-  "recommended_opener": "Understood. I'll walk you through what we need to check.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Answer directly, then say where they can find it next time.",
+  "recommended_opener": "I can help you find your delivery date. Let's go step by step.",
+  "style_cue": "Be calm, clear and stepwise. Ask for one detail at a time and confirm it back, spelling out order numbers in short groups. Once the order is found, state the estimated delivery date first, then the carrier and tracking status. If it's delayed, briefly acknowledge the inconvenience and explain the next step. Skip heavy apologies on routine date checks. Finish by saying where they can check status next time, such as the order confirmation email or the account's order page, and offer to send the tracking link by email.",
   "follow_ups": [
-    "What's your order number?"
+    "Could you tell me your order number?",
+    "What name or email is the order under?",
+    "Would you like the tracking link sent to your email?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (23% of calls)."
@@ -415,6 +417,6 @@
     -0.012880000285804272
   ],
   "call_count": 13,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

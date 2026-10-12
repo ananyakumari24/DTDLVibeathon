@@ -6,10 +6,12 @@
   "top_customer_phrasings": [
     "Escalate my duplicate charge case now."
   ],
-  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
-  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Confirm the escalation and give a reference number and a callback time.",
+  "recommended_opener": "I'm sorry you've been charged twice. I'll escalate this for you now, and I just need a couple of quick details first.",
+  "style_cue": "Acknowledge the frustration once, then move straight to escalating. Give clear, short steps and ask for one detail at a time, confirming each before moving on. Don't make the caller repeat information they've already given. Before ending, confirm the escalation is filed, read the reference number slowly, give a specific callback window, and say an email confirmation will follow.",
   "follow_ups": [
-    "Do you have the case number from your last call?"
+    "Do you have the case number from your last call?",
+    "What date and amount was the duplicate charge?",
+    "What's the best phone number for the callback?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (23% of calls).",
@@ -416,6 +418,6 @@
     0.028929999098181725
   ],
   "call_count": 13,
-  "built_with": "rules",
+  "built_with": "llm",
   "is_placeholder": false
 }

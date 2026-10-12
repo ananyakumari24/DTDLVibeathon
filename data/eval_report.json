@@ -9,14 +9,18 @@
     "zeroshot": {
       "issue_accuracy": 1.0,
       "intent_accuracy": 1.0
+    },
+    "llm": {
+      "issue_accuracy": 1.0,
+      "intent_accuracy": 1.0
     }
   },
   "agent_style_accuracy": 1.0,
   "live_classifier": {
     "pack_routing_accuracy": 1.0,
     "misroute_rate": 0.0,
-    "latency_ms_p50": 7.08,
-    "latency_ms_p95": 14.82,
+    "latency_ms_p50": 6.84,
+    "latency_ms_p95": 14.42,
     "under_200ms": true
   },
   "unresolved": {

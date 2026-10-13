@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "What's the estimated delivery date for my order?"
   ],
-  "recommended_opener": "I can help with that. Let me look up your delivery date.",
-  "style_cue": "Keep empathy light and natural. This is an information request, not a complaint, so don't apologize unless the customer mentions a delay or problem. Ask for only what you need to find the order, give the estimated delivery date clearly in one short sentence, and offer to send tracking details by email or text. If the order is delayed, acknowledge the frustration briefly, give the new estimate, and explain the next step. Mention where they can check the status themselves next time, such as the tracking link or order page.",
+  "recommended_opener": "I'm really sorry about that — this sounds stressful. I can help sort it out.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Answer directly, then say where they can find it next time.",
   "follow_ups": [
-    "Could you tell me your order number?",
-    "What email or phone number did you use for the order?",
-    "Would you like me to send the tracking link to you?"
+    "What's your order number?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (20% of calls).",
@@ -418,6 +416,6 @@
     0.05751999840140343
   ],
   "call_count": 10,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

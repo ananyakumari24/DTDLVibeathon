@@ -6,12 +6,11 @@
   "top_customer_phrasings": [
     "I can't log in even after resetting my password."
   ],
-  "recommended_opener": "I'm really sorry you're still locked out after resetting your password. That's frustrating, and I'll help you get back in.",
-  "style_cue": "Acknowledge the frustration in one short sentence, then move to troubleshooting. Ask one question at a time and wait for the answer. Confirm what you heard before the next step. Keep sentences short and spoken-friendly, with no long lists. End by saying exactly what you'll do next and that you'll confirm by email.",
+  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Get one key detail, then say what you'll fix and when.",
   "follow_ups": [
-    "What email address is on the account?",
-    "When you try to log in, what message do you see?",
-    "Are you using the new password from the reset link?"
+    "Which email is on the account?",
+    "Did the reset email arrive?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (6% of calls).",
@@ -418,6 +417,6 @@
     -0.037050001323223114
   ],
   "call_count": 17,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

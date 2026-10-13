@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "When is my next billing date?"
   ],
-  "recommended_opener": "Happy to help you check your next billing date. I'll just confirm your account first, then give you the date.",
-  "style_cue": "Keep the warmth light. This is a simple info request, not a complaint, so skip apologies unless the caller sounds upset. Verify the account, then state the date clearly and repeat it once. Mention the amount if it's available. Close by telling them where to find it next time, such as the app or account page under Billing. Use short spoken sentences and avoid long lists.",
+  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Answer directly, then say where they can find it next time.",
   "follow_ups": [
-    "Would you like me to repeat that date?",
-    "Do you want a reminder before you're charged?",
-    "Is there anything else about your bill I can check for you?"
+    "Which line on the bill would you like me to explain?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (17% of calls).",
@@ -418,6 +416,6 @@
     0.014650000259280205
   ],
   "call_count": 12,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

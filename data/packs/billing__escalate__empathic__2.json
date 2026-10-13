@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "I've called three times about this bill and need a supervisor."
   ],
-  "recommended_opener": "I'm sorry you've had to call about this more than once. That's frustrating, and I'll get this to a supervisor for you.",
-  "style_cue": "Start by acknowledging the customer's frustration and the repeat calls. Then confirm the escalation right away, without debating it. Keep sentences short and calm, and only collect the details the supervisor will need. Before ending, give a reference number and a specific callback time, read them back slowly, and say that a confirmation email will follow.",
+  "recommended_opener": "Understood. I'll walk you through what we need to check.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Confirm the escalation and give a reference number and a callback time.",
   "follow_ups": [
-    "Do you have the case number from one of your earlier calls?",
-    "Which charge or billing date is the problem?",
-    "What's the best number and time for the supervisor to reach you?"
+    "Do you have the case number from your last call?"
   ],
   "friction_alerts": [
     "Many of these are repeat contacts; acknowledge the earlier calls (100% of calls).",
@@ -418,6 +416,6 @@
     -0.0021800000686198473
   ],
   "call_count": 6,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

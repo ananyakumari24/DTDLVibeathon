@@ -1,17 +1,16 @@
 {
-  "pack_id": "shipping__escalate__empathic__3",
-  "intent": "escalate",
+  "pack_id": "shipping__troubleshoot__empathic__4",
+  "intent": "troubleshoot",
   "issue": "shipping",
   "style": "empathic",
   "top_customer_phrasings": [
     "Escalate my missing package claim immediately."
   ],
-  "recommended_opener": "I'm so sorry your package hasn't arrived. I know that's frustrating, and I'll escalate this for you right now.",
-  "style_cue": "Start by briefly acknowledging the customer's frustration, then confirm right away that you are escalating, without making them repeat their request. Keep sentences short and calm for voice, and collect one detail at a time. Before ending, read back the escalation reference number slowly. Give a specific callback or update time, and say that an email confirmation will follow. Don't promise a refund or replacement unless policy allows it.",
+  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Get one key detail, then say what you'll fix and when.",
   "follow_ups": [
-    "Could you tell me your order number so I can attach it to the escalation?",
-    "When was the package due to arrive, and what does the tracking show?",
-    "What's the best phone number and time for us to call you back?"
+    "What's your order number?",
+    "When did tracking last update?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (10% of calls)."
@@ -417,6 +416,6 @@
     0.07128000259399414
   ],
   "call_count": 10,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

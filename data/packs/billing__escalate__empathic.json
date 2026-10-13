@@ -8,12 +8,10 @@
     "I was charged twice for last month and I'm pretty frustrated.",
     "There's a duplicate charge on my card."
   ],
-  "recommended_opener": "I'm really sorry about the duplicate charge. That's frustrating, and I'll get your escalation started right now.",
-  "style_cue": "Briefly acknowledge the frustration first, then act on the escalation right away without making the caller repeat themselves. Confirm which charge is duplicated, state clearly that the case is escalated, and give a reference number, a callback timeframe, and a note that confirmation will follow by email. Keep sentences short and calm for voice, and read numbers back slowly.",
+  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Confirm the escalation and give a reference number and a callback time.",
   "follow_ups": [
-    "Do you have a case number from a previous call?",
-    "What were the date and amount of the duplicate charge?",
-    "What's the best number and time for our callback?"
+    "Do you have the case number from your last call?"
   ],
   "friction_alerts": [
     "Customers are often upset; acknowledge that before solving (22% of calls).",
@@ -421,6 +419,6 @@
     0.059689998626708984
   ],
   "call_count": 23,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

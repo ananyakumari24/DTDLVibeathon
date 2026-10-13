@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "I'm locked out and need a supervisor now."
   ],
-  "recommended_opener": "I'm sorry you're locked out. I'll get this to a supervisor, and I'll stay with you step by step until it's set up.",
-  "style_cue": "Acknowledge the urgency and confirm the escalation request right away. Don't make the caller argue for it. Speak in short, clear steps and ask for one detail at a time. Never ask for passwords or full security codes. Before ending, read back the reference number slowly and give a specific callback window. Then say an email confirmation is on its way.",
+  "recommended_opener": "I'm sorry you've had to deal with this. Let's fix it together.",
+  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Confirm the escalation and give a reference number and a callback time.",
   "follow_ups": [
-    "What email address or username is on the account?",
-    "What happens when you try to sign in? Do you see an error message, or does a code not arrive?",
-    "What's the best phone number and time for the supervisor to call you back?"
+    "Which email is on the account, so the specialist can find it?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (25% of calls).",
@@ -418,6 +416,6 @@
     -0.025189999490976334
   ],
   "call_count": 12,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "I've called three times about this bill and need a supervisor."
   ],
-  "recommended_opener": "I'm sorry you've had to call about this more than once. That's frustrating, and I'll make sure it gets to a supervisor today. Let's go step by step so they have everything they need.",
-  "style_cue": "Acknowledge the repeat calls before anything else, and don't make the caller re-explain from scratch. Be calm and stepwise, and ask for one detail at a time, using information from previous cases where it's available. Never refuse or stall the supervisor request. Confirm the escalation out loud, then give a reference number, read slowly and repeated once, and a specific callback window. Close by confirming the email summary and the best callback number.",
+  "recommended_opener": "I can help with that. Let's go step by step.",
+  "style_cue": "Be clear and stepwise, and ask for one detail at a time. Confirm the escalation and give a reference number and a callback time.",
   "follow_ups": [
-    "Do you have the case or reference number from one of your earlier calls?",
-    "Which charge or billing date is the issue about?",
-    "What's the best number and time for the supervisor to call you back?"
+    "Do you have the case number from your last call?"
   ],
   "friction_alerts": [
     "Many of these are repeat contacts; acknowledge the earlier calls (100% of calls).",
@@ -419,6 +417,6 @@
     0.025590000674128532
   ],
   "call_count": 8,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

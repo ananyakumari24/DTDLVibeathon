@@ -1,18 +1,17 @@
 {
-  "pack_id": "shipping__escalate__empathic__2",
-  "intent": "escalate",
+  "pack_id": "shipping__troubleshoot__empathic__3",
+  "intent": "troubleshoot",
   "issue": "shipping",
   "style": "empathic",
   "top_customer_phrasings": [
     "I've been waiting two weeks — escalate this shipping failure.",
     "The shipment is stuck and hasn't moved in days."
   ],
-  "recommended_opener": "I'm really sorry your shipment has been stuck. That's frustrating, especially after waiting this long. I'm escalating this now and I'll stay with you until it's sorted.",
-  "style_cue": "Briefly acknowledge the customer's frustration and the wait they've had, then move straight to action. Confirm out loud that the case is escalated. Read the reference number back slowly, one digit at a time, and state a specific callback time. Keep sentences short for voice. Ask one question at a time and confirm details back to the customer. Don't repeat filler like 'Thanks, I'll continue from those details.' Close by summarizing the next steps and saying an email confirmation is on its way.",
+  "recommended_opener": "I'm really sorry about that — this sounds stressful. I can help sort it out.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Get one key detail, then say what you'll fix and when.",
   "follow_ups": [
-    "Could you tell me your order number so I can attach it to the escalation?",
-    "What's the best phone number and time for our callback?",
-    "Is the delivery address on the order still correct?"
+    "What's your order number?",
+    "When did tracking last update?"
   ],
   "friction_alerts": [
     "Customers push back on repeating the story; summarise what you know instead (13% of calls).",
@@ -419,6 +418,6 @@
     0.09633000195026398
   ],
   "call_count": 15,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

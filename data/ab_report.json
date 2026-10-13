@@ -1,21 +1,21 @@
 {
-  "reply_source": "llm (anthropic)",
+  "reply_source": "templates (no AI key)",
   "plain_bot": {
-    "engagement_score": 0.8,
+    "engagement_score": 0.5,
     "checks": {
-      "right_tone": 0.6,
-      "on_topic": 0.8,
-      "no_repeat_burden": 1.0,
-      "moves_forward": 0.8
+      "right_tone": 0.2,
+      "on_topic": 0.0,
+      "no_repeat_burden": 0.8,
+      "moves_forward": 1.0
     },
     "replies": 10
   },
   "pattern_pack_bot": {
-    "engagement_score": 0.925,
+    "engagement_score": 0.8,
     "checks": {
-      "right_tone": 0.7,
-      "on_topic": 1.0,
-      "no_repeat_burden": 1.0,
+      "right_tone": 0.6,
+      "on_topic": 0.7,
+      "no_repeat_burden": 0.9,
       "moves_forward": 1.0
     },
     "replies": 10
@@ -26,17 +26,17 @@
       "turns": [
         {
           "customer": "Hey, my card got hit with the same subscription fee two times this month.",
-          "pack_id": "billing__troubleshoot__instructional__2",
-          "plain_reply": "I'm sorry about that double charge, let's get it sorted out. Could you tell me the email on your account and the date and amount of the charges?",
-          "pack_reply": "I'm sorry about the double charge, and I can help sort it out step by step. First, what date and amount do the two charges show?",
+          "pack_id": "billing__troubleshoot__instructional__3",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I can help with that. Let's go step by step. Which month shows the wrong charge?",
           "plain_checks": {
-            "right_tone": true,
-            "on_topic": true,
+            "right_tone": false,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },
           "pack_checks": {
-            "right_tone": true,
+            "right_tone": false,
             "on_topic": true,
             "no_repeat_burden": true,
             "moves_forward": true
@@ -44,12 +44,12 @@
         },
         {
           "customer": "Both are $12.99 on the 2nd.",
-          "pack_id": "billing__troubleshoot__instructional__2",
-          "plain_reply": "Thanks, I see two charges of $12.99 on the 2nd. What's the email address on your account so I can pull it up?",
-          "pack_reply": "Got it, two charges of $12.99 on the 2nd. Are both posted, or is one still pending?",
+          "pack_id": "billing__troubleshoot__instructional__3",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "Was it the same card both times?",
           "plain_checks": {
             "right_tone": false,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },
@@ -68,11 +68,11 @@
         {
           "customer": "Can you tell me when my order is supposed to get here?",
           "pack_id": "shipping__info__instructional",
-          "plain_reply": "Sure, I can check on that for you. Could you give me your order number or the email address you used to place the order?",
-          "pack_reply": "I can help you find your delivery date, so let's go step by step. Could you tell me your order number?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "Understood. I'll walk you through what we need to check. What's your order number?",
           "plain_checks": {
             "right_tone": true,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },
@@ -86,17 +86,17 @@
         {
           "customer": "It's 554210.",
           "pack_id": "shipping__info__instructional",
-          "plain_reply": "Thanks, I've got order number 554210. Give me just a moment while I pull that up for you.",
-          "pack_reply": "Thanks, that's 554, 210. What name or email is the order under?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm taking care of it now and I'll confirm the next step.",
           "plain_checks": {
             "right_tone": true,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
-            "moves_forward": false
+            "moves_forward": true
           },
           "pack_checks": {
             "right_tone": true,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           }
@@ -109,11 +109,11 @@
         {
           "customer": "The app keeps saying my password is wrong but I know it's right.",
           "pack_id": "account_access__troubleshoot__instructional__2",
-          "plain_reply": "I'm sorry, that's frustrating. Could you try tapping \"Forgot password\" to reset it, and check that caps lock is off?",
-          "pack_reply": "I'm sorry the app keeps rejecting your password; I can help you reset it, step by step. On the app's sign-in screen, do you see a \"Forgot password\" link?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm sorry about that. Understood. I'll walk you through what we need to check. Which email is on the account?",
           "plain_checks": {
-            "right_tone": true,
-            "on_topic": true,
+            "right_tone": false,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },
@@ -127,18 +127,18 @@
         {
           "customer": "I already tried that twice.",
           "pack_id": "account_access__troubleshoot__instructional__2",
-          "plain_reply": "Thanks for trying that. Did the reset email arrive, and if not, could you check your spam folder while I confirm the email address on your account?",
-          "pack_reply": "I'm really sorry, that's frustrating after trying the reset twice already. Did the reset email or code ever arrive, even in your spam folder?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm really sorry about this, I can hear how frustrating it's been. You're right, I have what you've told me, so you won't need to repeat it. Did the reset email arrive?",
           "plain_checks": {
             "right_tone": false,
-            "on_topic": true,
-            "no_repeat_burden": true,
+            "on_topic": false,
+            "no_repeat_burden": false,
             "moves_forward": true
           },
           "pack_checks": {
             "right_tone": true,
             "on_topic": true,
-            "no_repeat_burden": true,
+            "no_repeat_burden": false,
             "moves_forward": true
           }
         }
@@ -150,17 +150,17 @@
         {
           "customer": "This is the third time I'm calling about an overcharge. I want a manager.",
           "pack_id": "billing__escalate__empathic__2",
-          "plain_reply": "I'm really sorry you've had to call three times about this. I'll get a manager for you right now, and I'll pass along your account details so you don't have to explain everything again.",
-          "pack_reply": "I'm really sorry you've had to call about this overcharge three times. That's frustrating, and I'll get this to a supervisor for you right now \u2014 do you have the case number from one of your earlier calls?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm really sorry about this, I can hear how frustrating it's been. Understood. I'll walk you through what we need to check. Do you have the case number from your last call?",
           "plain_checks": {
-            "right_tone": true,
+            "right_tone": false,
             "on_topic": false,
-            "no_repeat_burden": true,
+            "no_repeat_burden": false,
             "moves_forward": true
           },
           "pack_checks": {
             "right_tone": true,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           }
@@ -168,17 +168,17 @@
         {
           "customer": "Just get me someone who can fix it.",
           "pack_id": "billing__escalate__empathic__2",
-          "plain_reply": "Absolutely, I'm transferring you to a manager now, and they'll have all your details ready. Thank you for your patience.",
-          "pack_reply": "Absolutely, I'm escalating your overcharge to a supervisor now, and I'll pass along that you've already called three times. What's the best number and time for them to reach you?",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm taking care of it now and I'll confirm the next step.",
           "plain_checks": {
             "right_tone": false,
             "on_topic": false,
             "no_repeat_burden": true,
-            "moves_forward": false
+            "moves_forward": true
           },
           "pack_checks": {
             "right_tone": false,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           }
@@ -190,12 +190,12 @@
       "turns": [
         {
           "customer": "The box arrived crushed and the blender inside is broken.",
-          "pack_id": "shipping__troubleshoot__empathic",
-          "plain_reply": "I'm so sorry your blender arrived broken. I can get a replacement out to you right away, so could you give me your order number?",
-          "pack_reply": "I'm so sorry your blender arrived broken in a crushed box, that's really frustrating, and I'll help you sort it out. Could you tell me your order number?",
+          "pack_id": "shipping__troubleshoot__empathic__2",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "I'm sorry you've had to deal with this. Let's fix it together. What's your order number?",
           "plain_checks": {
-            "right_tone": true,
-            "on_topic": true,
+            "right_tone": false,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },
@@ -208,12 +208,12 @@
         },
         {
           "customer": "Order 771032.",
-          "pack_id": "shipping__troubleshoot__empathic",
-          "plain_reply": "Thank you, I've got order 771032 for the blender. To get your replacement shipped, could you confirm the delivery address you'd like it sent to?",
-          "pack_reply": "Thanks, that's order 771032 for the blender that arrived broken. Would you prefer a replacement or a refund?",
+          "pack_id": "shipping__troubleshoot__empathic__2",
+          "plain_reply": "Thanks for calling. Could you tell me more about the problem?",
+          "pack_reply": "When did tracking last update?",
           "plain_checks": {
             "right_tone": false,
-            "on_topic": true,
+            "on_topic": false,
             "no_repeat_burden": true,
             "moves_forward": true
           },

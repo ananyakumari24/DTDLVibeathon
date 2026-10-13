@@ -6,12 +6,10 @@
   "top_customer_phrasings": [
     "Where do I manage two-factor authentication?"
   ],
-  "recommended_opener": "Happy to help with that. I can walk you through where to find your two-factor authentication settings.",
-  "style_cue": "Keep the warmth light and matched to the request. This is a simple how-to question, so skip apologies and stress language. Give the location right away in short spoken steps, one at a time, and pause to check the caller is following. Finish by saying where to find the setting next time. Don't promise email follow-ups unless the caller asks for something that needs one.",
+  "recommended_opener": "I'm really sorry about that — this sounds stressful. I can help sort it out.",
+  "style_cue": "Acknowledge how the customer feels before anything else. Answer directly, then say where they can find it next time.",
   "follow_ups": [
-    "Are you using the app or the website?",
-    "Do you want to turn it on, turn it off, or change your verification method?",
-    "Can you still sign in to your account right now?"
+    "Are you using the app or the website?"
   ],
   "friction_alerts": [
     "Customers often say they already explained; don't ask them to repeat (15% of calls)."
@@ -417,6 +415,6 @@
     0.032760001718997955
   ],
   "call_count": 13,
-  "built_with": "llm",
+  "built_with": "rules",
   "is_placeholder": false
 }

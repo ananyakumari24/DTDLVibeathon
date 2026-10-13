@@ -174,7 +174,7 @@ def build_pack(cluster: Cluster, members: List[Conversation]) -> PatternPack:
 
 def build_all(clusters: List[Cluster], conversations: List[Conversation]) -> List[PatternPack]:
     by_id: Dict[str, Conversation] = {c.call_id: c for c in conversations}
-    return llm.pmap(lambda cl: build_pack(cl, [by_id[i] for i in cl.member_call_ids if i in by_id]), clusters)
+    return [build_pack(cl, [by_id[i] for i in cl.member_call_ids if i in by_id]) for cl in clusters]
 
 
 def save_packs(packs: List[PatternPack], packs_dir: Path = PACKS_DIR) -> None:

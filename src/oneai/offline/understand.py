@@ -60,7 +60,7 @@ def _zeroshot(text: str) -> Dict[str, str]:
 
 def _llm(text: str) -> Dict[str, str]:
     prompt = LLM_PROMPT.format(issues=list(ISSUE_LABELS), qtypes=list(QUESTION_TYPES), text=text)
-    data = llm.chat_json(prompt, label=True)
+    data = llm.chat_json(prompt)
     if data.get("issue") not in ISSUE_LABELS or data.get("question_type") not in QUESTION_TYPES:
         raise ValueError(f"LLM returned labels outside the taxonomy: {data}")
     return {"issue": data["issue"], "question_type": data["question_type"], "method": "llm"}
@@ -72,7 +72,7 @@ def understand_text(text: str, method: str = "auto") -> Dict[str, str]:
     if method == "zeroshot":
         return _zeroshot(text)
     if method == "llm" and not llm.available():
-        raise RuntimeError("No AI key set (ANTHROPIC_API_KEY, OPENAI_API_KEY or CURSOR_API_KEY)")
+        raise RuntimeError("No AI key set (OPENAI_API_KEY or CURSOR_API_KEY)")
     try:
         return _llm(text) if llm.available() else _zeroshot(text)
     except Exception:

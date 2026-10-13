@@ -61,7 +61,7 @@ def _friction_rules(conv: Conversation) -> List[str]:
 
 def _llm_insight(conv: Conversation) -> Dict:
     call = "\n".join(f"{t.speaker}: {t.text}" for t in conv.turns)
-    data = llm.chat_json(INSIGHT_PROMPT.format(styles=list(STYLES), flags=list(FRICTION_FLAGS), call=call), label=True)
+    data = llm.chat_json(INSIGHT_PROMPT.format(styles=list(STYLES), flags=list(FRICTION_FLAGS), call=call))
     flags = data.get("friction_flags", [])
     if data.get("agent_style") not in STYLES or not isinstance(flags, list):
         raise ValueError(f"LLM returned labels outside the taxonomy: {data}")
